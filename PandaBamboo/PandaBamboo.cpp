@@ -2,29 +2,69 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "config_sdl.h"
-using namespace std;
-
+#include <ctime>
+ 
 using namespace std;
 
 const int LARGEUR = 800; //largeur fenetre
 const int HAUTEUR = 600;  //hauteur fenetre
-const int N = 6;
- 
-void Aléatoire(int Tab[][N]) {
+const int N = 100;
 
+struct bambou {
+
+	int posx;
+	int posy;
+	int croissance;
+	int hauteur = NULL;
+
+};
+
+void Aléatoire(bambou tablo[]) {
+	srand(time(NULL));
+	for (int i = 0; i < N; i++) {
+		tablo[i].croissance = rand() % 20;
+
+	}
 }
 
-void HauteurMax(int Tab[][N]) {
+int HauteurMax(int Tab[][N]) {
 
+	int HauteurMax = 0;
+	for (int j = 0; j < N; j++) {
+		if (j > HauteurMax) {
+
+			HauteurMax = j;
+		}
+	}
+	return HauteurMax;
 }
 
-void DevMax(int ) {
+int Moyenne(int Tab[][N]) {
 
+	int somme;
+	for (int i = 0; i < N; i++) {
+		somme = Tab[N][N] + Tab[N+1][N + 1];
+	}
+	int moyenne;
+
+	moyenne = somme / N;
+
+	return moyenne;
 }
 
 
 int main(int argn, char* argv[]) {//entête imposée
-								  //ouverture de la SDL
+							  //ouverture de la SDL*
+	struct bambou {
+		int posx;
+		int posy;
+		int croissance;
+		int hauteur = NULL;
+	};
+
+	bambou tab[N];
+	
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
 		return 1;
@@ -71,5 +111,9 @@ int main(int argn, char* argv[]) {//entête imposée
 
 	//fermeture
 	SDL_Quit();
+
+	cout << " Donnez un nombre de bambous";
+	
+
 	return 0;
 }
