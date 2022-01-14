@@ -5,8 +5,22 @@
 
 using namespace std;
 
-const int LARGEUR = 640; //largeur fenetre
-const int HAUTEUR = 480;  //hauteur fenetre
+const int LARGEUR = 800; //largeur fenetre
+const int HAUTEUR = 600;  //hauteur fenetre
+const int N = 6;
+ 
+void Aléatoire(int Tab[][N]) {
+
+}
+
+void HauteurMax(int Tab[][N]) {
+
+}
+
+void DevMax(int ) {
+
+}
+
 
 int main(int argn, char* argv[]) {//entête imposée
 								  //ouverture de la SDL
@@ -43,7 +57,7 @@ int main(int argn, char* argv[]) {//entête imposée
 		switch (event.type) //test du type d’évènement
 		{
 		case SDL_QUIT: //clic sur la croix de fermeture
-					   //on peut enlever SDL_Delay
+					   
 			continuer = false;
 			break;
 		}
