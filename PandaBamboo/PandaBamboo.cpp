@@ -5,38 +5,46 @@
 using namespace std;
 
 
-const int LARGEUR = 800; //largeur fenetre
-const int HAUTEUR = 600;  //hauteur fenetre
+const int LARGEUR = 1000; //largeur fenetre
+const int HAUTEUR = 700;  //hauteur fenetre
 const int N = 6;
- 
-void Aléatoire(int Tab[][N]) {
+const char image[] = "panda.png";
+void menu_principal(SDL_Renderer* rendu) {
+
+	SDL_Rect titre;
+	titre.x = 80;
+	titre.y = 40;
+	titre.w = LARGEUR - titre.x*2;
+	titre.h = 100;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255,255);
+	SDL_RenderDrawRect(rendu, &titre);
+	
+	SDL_Rect jeu_auto;
+	jeu_auto.x = 80;
+	jeu_auto.y = 40;
+	jeu_auto.w = LARGEUR - jeu_auto.x * 2;
+	jeu_auto.h = 100;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderDrawRect(rendu, &titre);
 
 }
 
-void HauteurMax(int Tab[][N]) {
 
-}
-
-void DevMax(int ) {
-
-}
-
-
-int main(int argn, char* argv[]) {//entête imposée
-								  //ouverture de la SDL
+int main(int argn, char* argv[]) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
 		return 1;
 	}
 
 	//on crée la fenêtre
-	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
-		SDL_WINDOWPOS_CENTERED,     //pos. X: autre option: SDL_WINDOWPOS_UNDEFINED
-		SDL_WINDOWPOS_CENTERED,     //pos. Y: autre option: SDL_WINDOWPOS_UNDEFINED 
-		LARGEUR, 			//largeur en pixels			
-		HAUTEUR, 			//hauteur en pixels
-		SDL_WINDOW_SHOWN //d’autres options (plein ecran, resizable, sans bordure...)
+	SDL_Window* win = SDL_CreateWindow("Menu Principal",
+		SDL_WINDOWPOS_CENTERED,     
+		SDL_WINDOWPOS_CENTERED,     
+		LARGEUR, 					
+		HAUTEUR, 			
+		SDL_WINDOW_SHOWN 
 	);
+	
 	if (win == NULL)
 		cout << "erreur ouverture fenetre";
 
@@ -45,9 +53,9 @@ int main(int argn, char* argv[]) {//entête imposée
 		win,  //nom de la fenêtre
 		-1, //par défaut
 		SDL_RENDERER_ACCELERATED); //utilisation du GPU, valeur recommandée
-
+	menu_principal(rendu);
 	SDL_RenderPresent(rendu);
-
+	
 	bool continuer = true;   //booléen fin de programme
 	SDL_Event event;//gestion des évènements souris/clavier, 
 					//SDL_Event est de type struct
@@ -62,13 +70,10 @@ int main(int argn, char* argv[]) {//entête imposée
 			break;
 		}
 	}
-	//destruction du renderer à la fin
+	
 	SDL_DestroyRenderer(rendu);
-
-	//destruction à la fin
-	SDL_DestroyWindow(win);   //equivalent du delete
-
-	//fermeture
+	SDL_DestroyWindow(win);  
 	SDL_Quit();
 	return 0;
 }
+
