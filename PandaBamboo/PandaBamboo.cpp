@@ -4,7 +4,6 @@
 #include "config_sdl.h"
 using namespace std;
 
-using namespace std;
 
 const int LARGEUR = 800; //largeur fenetre
 const int HAUTEUR = 600;  //hauteur fenetre
