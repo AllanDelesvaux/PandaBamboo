@@ -39,6 +39,13 @@ void interface_auto(SDL_Renderer* rendu) {
 			SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
 			SDL_RenderDrawRect(rendu, &bambooSeparation);
 
+		}
+	}
+}
+
+void interface(SDL_Renderer* rendu) {
+	for (int i = 20; i < 820; i += 200) {
+		for (int j = 20; j < 820; j += 200) {
 			SDL_Rect bamboo;
 			bamboo.x = j + 63;
 			bamboo.y = i + 60;
@@ -59,6 +66,32 @@ void interface_auto(SDL_Renderer* rendu) {
 		}
 	}
 }
+
+struct Bamboo {
+	int taille;
+	int croissance;
+	int x;
+	int y;
+};
+
+void Aléatoire(Bamboo* tab,int taille) {
+	srand(time(NULL));
+	for (int i = 0; i < taille; i++) {
+		tab[i].croissance = rand() % 20;
+	}
+}
+
+int Reduce_Max(Bamboo* tab, int taille) {
+	int max = 0;
+	for (int i = 0; i < taille; i++) {
+		if (tab[i].taille > max) {
+			max = i;
+		}
+	}
+	tab[max].taille = 0;
+	return(max);
+}
+
 
 int panda(SDL_Renderer* rendu, int x, int y) {
 	SDL_Surface* image = IMG_Load("panda1.PNG");
