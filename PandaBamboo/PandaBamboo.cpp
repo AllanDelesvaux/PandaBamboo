@@ -48,10 +48,9 @@ int Moyenne(int Tab[][N]) {
 		somme = Tab[N][N] + Tab[N+1][N + 1];
 	}
 	int moyenne;
-
 	moyenne = somme / N;
-
 	return moyenne;
+
 }
 
 
@@ -115,6 +114,18 @@ int main(int argn, char* argv[]) {//entête imposée
 	SDL_Quit();
 
 	cout << " Donnez un nombre de bambous";
+
+	// fenêtre des stats
+
+	SDL_Window* win = SDL_CreateWindow("Mon app", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, TX, TY, SDL_WINDOW_SHOWN);
+	if (win == NULL)
+		cout << "erreur ouverture fenetre";
+	//on récupère le rendu de la fenêtre (élément dans lequel on tracera)
+	SDL_Renderer* rendu = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+
+	charger("Mystere.txt", tabcouleur, rendu);
+	afficher_palette(rendu);
+
 	
 
 	return 0;
