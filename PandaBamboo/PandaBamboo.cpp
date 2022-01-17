@@ -7,18 +7,6 @@ using namespace std;
 const int LARGEUR = 1200; 
 const int HAUTEUR = 900;  
 const int N = 6;
- 
-void Aléatoire(int Tab[][N]) {
-
-}
-
-void HauteurMax(int Tab[][N]) {
-
-}
-
-void DevMax(int ) {
-
-}
 
 void interface_auto(SDL_Renderer* rendu) {
 
@@ -68,7 +56,6 @@ void interface_auto(SDL_Renderer* rendu) {
 		}
 	}
 }
-
 int panda(SDL_Renderer* rendu,int x, int y) {
 	SDL_Surface* image = IMG_Load("panda1.PNG");
 	if (!image)
@@ -88,8 +75,6 @@ int panda(SDL_Renderer* rendu,int x, int y) {
 	SDL_RenderCopy(rendu, monImage, NULL, &posImg);
 	SDL_RenderPresent(rendu);
 }
-
-
 void Left(SDL_Renderer* rendu,int &x, int &y) {
 	SDL_Rect RobotLft;
 	RobotLft.x = x+1;
@@ -103,7 +88,6 @@ void Left(SDL_Renderer* rendu,int &x, int &y) {
 
 	panda(rendu, x, y);
 }
-
 void Right(SDL_Renderer* rendu,int &x, int &y) {
 	SDL_Rect RobotRght;
 	RobotRght.x = x+1;
@@ -143,8 +127,7 @@ void Down(SDL_Renderer* rendu,int &x, int &y) {
 
 	panda(rendu, x, y);
 }
-
-int main(int argn, char* argv[]) {
+int jeu(int argn, char* argv[]) {
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -153,39 +136,39 @@ int main(int argn, char* argv[]) {
 	}
 
 	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
-		SDL_WINDOWPOS_CENTERED,    
-		SDL_WINDOWPOS_CENTERED,     
-		LARGEUR, 					
-		HAUTEUR, 			
-		SDL_WINDOW_SHOWN 
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR,
+		HAUTEUR,
+		SDL_WINDOW_SHOWN
 	);
 	if (win == NULL)
 		cout << "erreur ouverture fenetre";
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
-		win,  
-		-1, 
+		win,
+		-1,
 		SDL_RENDERER_ACCELERATED);
-	
+
 	interface_auto(rendu);
 	panda(rendu, x, y);
 	SDL_RenderPresent(rendu);
 
-	bool continuer = true; 
+	bool continuer = true;
 	SDL_Event event;
-					
+
 	while (continuer)
 	{
 		SDL_WaitEvent(&event);
-		switch (event.type) 
+		switch (event.type)
 		{
 		case SDL_QUIT:
-					   
+
 			continuer = false;
 			break;
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_LEFT && x > 145) {
-				Left(rendu,x,y);
+				Left(rendu, x, y);
 				SDL_RenderPresent(rendu);
 			}
 			if (event.key.keysym.sym == SDLK_RIGHT && x < 660) {
@@ -202,8 +185,8 @@ int main(int argn, char* argv[]) {
 			}
 			if (event.key.keysym.sym == SDLK_RETURN) {
 				SDL_Rect Cut;
-				Cut.x = x-73;
-				Cut.y = y-60;
+				Cut.x = x - 73;
+				Cut.y = y - 60;
 				Cut.w = 40;
 				Cut.h = 154;
 				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
@@ -215,5 +198,7 @@ int main(int argn, char* argv[]) {
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
+	
 	return 0;
 }
+
