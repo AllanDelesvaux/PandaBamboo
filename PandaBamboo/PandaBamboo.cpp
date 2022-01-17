@@ -43,7 +43,7 @@ void interface_auto(SDL_Renderer* rendu) {
 	}
 }
 
-void interface(SDL_Renderer* rendu) {
+/*void interface(SDL_Renderer* rendu) {
 	for (int i = 20; i < 820; i += 200) {
 		for (int j = 20; j < 820; j += 200) {
 			SDL_Rect bamboo;
@@ -57,6 +57,30 @@ void interface(SDL_Renderer* rendu) {
 			for (int k = i; k < i + 139; k += 30) {
 				SDL_Rect bambooIncrease;
 				bambooIncrease.x = j + 60;
+				bambooIncrease.y = k + 60;
+				bambooIncrease.w = 16;
+				bambooIncrease.h = 3;
+				SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+				SDL_RenderFillRect(rendu, &bambooIncrease);
+			}
+		}
+	}
+}*/
+
+void interface(SDL_Renderer* rendu) {
+	for (int i = 0; i < N; i += 1) {
+		for (int j = 0; j < N; j += 1) {
+			SDL_Rect bamboo;
+			bamboo.x = j * 200 + 83;
+			bamboo.y = i * 200 + 80;
+			bamboo.w = 10;
+			bamboo.h = tab[i][j].taille;
+			SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+			SDL_RenderFillRect(rendu, &bamboo);
+
+			for (int k = i * 200 + 20; k < i * 200 + 159; k += Tab[i][j].croissance) {
+				SDL_Rect bambooIncrease;
+				bambooIncrease.x = j * 200 + 80;
 				bambooIncrease.y = k + 60;
 				bambooIncrease.w = 16;
 				bambooIncrease.h = 3;
@@ -82,7 +106,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 	}
 }
 
-void Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
+int Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
 	int max = 0;
 	for (int i = 0; i < taille; i++) {
 		for (int j = 0; j < taille; i++) {
@@ -93,6 +117,7 @@ void Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
 			}
 		}
 	}
+	return max;
 }
 
 int panda(SDL_Renderer* rendu, int x, int y) {
@@ -190,55 +215,38 @@ int jeuAuto(Bamboo tab[][N]) {
 		SDL_RENDERER_ACCELERATED);
 
 	interface_auto(rendu);
-	panda(rendu, x, y);
-	SDL_RenderPresent(rendu);
-
-	bool continuer = true;
-	SDL_Event event;
-
-	while (continuer)
-	{
-		SDL_WaitEvent(&event);
-		switch (event.type)
-		{
-		case SDL_QUIT:
-
-			continuer = false;
-			break;
-		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_LEFT && x > 145) {
-				Left(rendu, x, y);
-				SDL_RenderPresent(rendu);
-			}
-			if (event.key.keysym.sym == SDLK_RIGHT && x < 660) {
-				Right(rendu, x, y);
-				SDL_RenderPresent(rendu);
-			}
-			if (event.key.keysym.sym == SDLK_UP && y > 180) {
-				Up(rendu, x, y);
-				SDL_RenderPresent(rendu);
-			}
-			if (event.key.keysym.sym == SDLK_DOWN && y < 720) {
-				Down(rendu, x, y);
-				SDL_RenderPresent(rendu);
-			}
-			if (event.key.keysym.sym == SDLK_RETURN) {
-				SDL_Rect Cut;
-				Cut.x = x - 73;
-				Cut.y = y - 60;
-				Cut.w = 40;
-				Cut.h = 154;
-				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-				SDL_RenderFillRect(rendu, &Cut);
-				SDL_RenderPresent(rendu);
-			}
-			if (event.key.keysym.sym == SDLK_SPACE) {
-				for (int i = 0; i < N; i++) {
-					for (int j = 0; j < N; j++) {
-						Tab[i][j].Taille += Tab[i][j].Croissance;
+	while (Reduce_Max(tab, N, i, j) < 175) {
+		for (int a = 0; a < N; a++) {
+			for (int b = 0; b < N; b++) {
+				Tab[a][b].Taille += Tab[a][b].Croissance;
 			}
 		}
+		interface(rendu);
+		SDL_RenderPresent(rendu);
+		SDL_Rect Cut;
+		Cut.x = x + 200*j - 73;
+		Cut.y = y - 200*i - 60;
+		Cut.w = 40;
+		Cut.h = 154;
+		SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+		SDL_RenderFillRect(rendu, &Cut);
+		SDL_RenderPresent(rendu);
+		panda(rendu, x+200*j+1, y+200*i+1);
+		SDL_RenderPresent(rendu);
+
+		bool continuer = true;
+		SDL_Event event;
 	}
+		while (continuer) {
+			SDL_WaitEvent(&event);
+			switch (event.type)
+			{
+			case SDL_QUIT:
+
+				continuer = false;
+				break;
+			}
+		}
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
@@ -308,6 +316,15 @@ int jeuMan(Bamboo tab[][N]) {
 				Cut.h = 154;
 				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 				SDL_RenderFillRect(rendu, &Cut);
+				SDL_RenderPresent(rendu);
+			}
+			if (event.key.keysym.sym == SDLK_SPACE) {
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						Tab[i][j].Taille += Tab[i][j].Croissance;
+					}
+				}
+				interface(rendu);
 				SDL_RenderPresent(rendu);
 			}
 		}
