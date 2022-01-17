@@ -7,18 +7,9 @@ const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
 SDL_Color blanc = { 255,255,255 };
 
-
-#include <iostream>
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include "config_sdl.h"
-using namespace std;
-
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
 const int N = 6;
-
-
 
 void interface_auto(SDL_Renderer* rendu) {
 
@@ -373,7 +364,6 @@ int main(int argn, char* argv[]) {
 				}
 			}
 		}
-
 	}
 
 	SDL_DestroyRenderer(rendu);
