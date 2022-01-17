@@ -20,6 +20,26 @@ void DevMax(int ) {
 
 }
 
+void menu_principal(SDL_Renderer* rendu) {
+
+	SDL_Rect titre;
+	titre.x = 80;
+	titre.y = 40;
+	titre.w = LARGEUR - titre.x * 2;
+	titre.h = 100;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderDrawRect(rendu, &titre);
+
+	SDL_Rect jeu_auto;
+	jeu_auto.x = 80;
+	jeu_auto.y = 40;
+	jeu_auto.w = LARGEUR - jeu_auto.x * 2;
+	jeu_auto.h = 100;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderDrawRect(rendu, &titre);
+
+}
+
 void Left() {
 
 }
