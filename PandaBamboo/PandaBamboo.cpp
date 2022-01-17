@@ -19,7 +19,7 @@ struct bambou {
 
 };
 
-void Aléatoire(bambou tablo[]) {
+void Aléatoire(bambou tablo[N]) {
 	srand(time(NULL));
 	for (int i = 0; i < N; i++) {
 		tablo[i].croissance = rand() % 20;
@@ -27,7 +27,7 @@ void Aléatoire(bambou tablo[]) {
 	}
 }
 
-int HauteurMax(int Tab[][N]) {
+int HauteurMax(int Tab[N][N]) {
 
 	int HauteurMax = 0;
 	for (int i = 0; i < N; i++) {
@@ -41,7 +41,7 @@ int HauteurMax(int Tab[][N]) {
 	return HauteurMax;
 }
 
-int Moyenne(int Tab[][N]) {
+int Moyenne(int Tab[N][N]) {
 
 	int somme;
 	for (int i = 0; i < N; i++) {
@@ -53,15 +53,17 @@ int Moyenne(int Tab[][N]) {
 
 }
 
-void stats(SDL_Renderer* rendu,int x1, int y1, int x2, int y2) {
+void abcisse(SDL_Renderer* rendu,int x1, int y1, int x2, int y2) {
 	
 	SDL_SetRenderDrawColor(rendu,255,255,255,255);
-	SDL_RenderDrawLine( rendu,  0, 25, LARGEUR/2, 25);
+	SDL_RenderDrawLine( rendu,  0, 525, LARGEUR/2, 525);
 	SDL_RenderPresent(rendu);
 }
 
+void ordonnée(SDL_Renderer* rendu, int x1, int y1, int x2, int y2) {
+
 	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
-	SDL_SetRenderDrawLine(255, 0, Largeur / 2, 255);
+	SDL_RenderDrawLine(rendu, 0, 0, 0, 525);
 	SDL_RenderPresent(rendu);
 
 }
@@ -79,7 +81,7 @@ int main(int argn, char* argv[]) {//entête imposée
 	};
 
 	bambou tab[N];
-	
+	int Tab[N][N];
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
@@ -104,8 +106,10 @@ int main(int argn, char* argv[]) {//entête imposée
 		SDL_RENDERER_ACCELERATED); //utilisation du GPU, valeur recommandée
 
 	SDL_RenderPresent(rendu);
-
-	stats(rendu, x1, y1, x2, y2);
+	abcisse(rendu, x1, y1, x2, y2);
+	ordonnée(rendu, x1, y1, x2, y2);
+	HauteurMax(Tab);
+	Moyenne(Tab);
 
 	bool continuer = true;   //booléen fin de programme
 	SDL_Event event;//gestion des évènements souris/clavier, 
