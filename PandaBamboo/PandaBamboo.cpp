@@ -42,7 +42,6 @@ void interface_auto(SDL_Renderer* rendu) {
 		}
 	}
 }
-
 /*void interface(SDL_Renderer* rendu) {
 	for (int i = 20; i < 820; i += 200) {
 		for (int j = 20; j < 820; j += 200) {
@@ -66,8 +65,7 @@ void interface_auto(SDL_Renderer* rendu) {
 		}
 	}
 }*/
-
-void interface(SDL_Renderer* rendu) {
+void FUCK(SDL_Renderer* rendu, Bamboo tab[][N]) {
 	for (int i = 0; i < N; i += 1) {
 		for (int j = 0; j < N; j += 1) {
 			SDL_Rect bamboo;
@@ -78,7 +76,7 @@ void interface(SDL_Renderer* rendu) {
 			SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
 			SDL_RenderFillRect(rendu, &bamboo);
 
-			for (int k = i * 200 + 20; k < i * 200 + 159; k += Tab[i][j].croissance) {
+			for (int k = i * 200 + 20; k < i * 200 + 159; k += tab[i][j].croissance) {
 				SDL_Rect bambooIncrease;
 				bambooIncrease.x = j * 200 + 80;
 				bambooIncrease.y = k + 60;
@@ -90,12 +88,10 @@ void interface(SDL_Renderer* rendu) {
 		}
 	}
 }
-
 struct Bamboo {
 	int taille;
 	int croissance;
 };
-
 void Aléatoire(Bamboo tab[][N], int taille) {
 	srand(time(NULL));
 	for (int i = 0; i < taille; i++) {
@@ -105,7 +101,6 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 		}
 	}
 }
-
 int Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
 	int max = 0;
 	for (int i = 0; i < taille; i++) {
@@ -119,7 +114,6 @@ int Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
 	}
 	return max;
 }
-
 int panda(SDL_Renderer* rendu, int x, int y) {
 	SDL_Surface* image = IMG_Load("panda1.PNG");
 	if (!image)
@@ -191,7 +185,11 @@ void Down(SDL_Renderer* rendu, int& x, int& y) {
 
 	panda(rendu, x, y);
 }
-int jeuAuto(Bamboo tab[][N]) {
+int jeuAuto() {
+	Bamboo Tab[N][N];
+	Aléatoire(Tab, N);
+	int i = 0;
+	int j = 0;
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -215,28 +213,28 @@ int jeuAuto(Bamboo tab[][N]) {
 		SDL_RENDERER_ACCELERATED);
 
 	interface_auto(rendu);
-	while (Reduce_Max(tab, N, i, j) < 175) {
+	while (Reduce_Max(Tab, N, i, j) < 175) {
 		for (int a = 0; a < N; a++) {
 			for (int b = 0; b < N; b++) {
-				Tab[a][b].Taille += Tab[a][b].Croissance;
+				Tab[a][b].taille += Tab[a][b].croissance;
 			}
 		}
-		interface(rendu);
+		FUCK(rendu, Tab);
 		SDL_RenderPresent(rendu);
 		SDL_Rect Cut;
-		Cut.x = x + 200*j - 73;
-		Cut.y = y - 200*i - 60;
+		Cut.x = x + 200 * j - 73;
+		Cut.y = y - 200 * i - 60;
 		Cut.w = 40;
 		Cut.h = 154;
 		SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 		SDL_RenderFillRect(rendu, &Cut);
 		SDL_RenderPresent(rendu);
-		panda(rendu, x+200*j+1, y+200*i+1);
+		panda(rendu, x + 200 * j + 1, y + 200 * i + 1);
 		SDL_RenderPresent(rendu);
 
 		bool continuer = true;
 		SDL_Event event;
-	}
+
 		while (continuer) {
 			SDL_WaitEvent(&event);
 			switch (event.type)
@@ -247,12 +245,15 @@ int jeuAuto(Bamboo tab[][N]) {
 				break;
 			}
 		}
+	}
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 	return 0;
-}
-int jeuMan(Bamboo tab[][N]) {
+}  
+int jeuMan() {
+	Bamboo Tab[N][N];
+	Aléatoire(Tab, N);
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -321,10 +322,10 @@ int jeuMan(Bamboo tab[][N]) {
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
 					for (int j = 0; j < N; j++) {
-						Tab[i][j].Taille += Tab[i][j].Croissance;
+						Tab[i][j].taille += Tab[i][j].croissance;
 					}
 				}
-				interface(rendu);
+				FUCK(rendu,Tab);
 				SDL_RenderPresent(rendu);
 			}
 		}
@@ -333,7 +334,7 @@ int jeuMan(Bamboo tab[][N]) {
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 	return 0;
-}
+} 
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
 	SDL_Rect titre;
@@ -401,13 +402,8 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_DestroyTexture(texture3);
 
 }
-
-
 int main(int argn, char* argv[]) {
-	int i = 0, j = 0;
-	Bamboo Tab[N][N];
-	Aléatoire(Tab, N);
-
+	
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
@@ -462,14 +458,14 @@ int main(int argn, char* argv[]) {
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
-					jeuAuto(Tab);
+					jeuAuto();
 				}
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
-					jeuMan(Tab);
+					jeuMan();
 				}
 			}
 		}
