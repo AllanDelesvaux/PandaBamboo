@@ -7,6 +7,24 @@ const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
 SDL_Color blanc = { 255,255,255 };
 
+struct Bamboo {
+	int taille;
+	int croissance;
+	int x;
+	int y;
+};
+
+int Reduce_Max(Bamboo* tab,int taille) {
+	int max = 0;
+	for (int i = 0; i < taille;i++) {
+		if (tab[i].taille > max) {
+			max = i;
+		}
+	}
+	tab[max].taille = 0;
+	return (max);
+}
+
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_Rect titre;
 	titre.x = 80;
@@ -76,7 +94,10 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
 
 int main(int argn, char* argv[]) {
+	const int nbr_bamboo = 5;
 
+	Bamboo forest[nbr_bamboo];
+	
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
