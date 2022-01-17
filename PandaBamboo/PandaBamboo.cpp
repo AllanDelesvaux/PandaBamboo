@@ -9,8 +9,9 @@ const int LARGEUR = 1000; //largeur fenetre
 const int HAUTEUR = 700;  //hauteur fenetre
 const int N = 6;
 const char image[] = "panda.png";
-void menu_principal(SDL_Renderer* rendu) {
 
+
+void menu_principal(SDL_Renderer* rendu) {
 	SDL_Rect titre;
 	titre.x = 80;
 	titre.y = 40;
@@ -20,13 +21,21 @@ void menu_principal(SDL_Renderer* rendu) {
 	SDL_RenderDrawRect(rendu, &titre);
 	
 	SDL_Rect jeu_auto;
+	jeu_auto.w = LARGEUR/2-80*2;
+	jeu_auto.h = 200;
 	jeu_auto.x = 80;
-	jeu_auto.y = 40;
-	jeu_auto.w = LARGEUR - jeu_auto.x * 2;
-	jeu_auto.h = 100;
-	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
-	SDL_RenderDrawRect(rendu, &titre);
+	jeu_auto.y = HAUTEUR/2-jeu_auto.h/2;
 
+	
+	SDL_RenderDrawRect(rendu, &jeu_auto);
+
+	SDL_Rect jeu_manuel;
+	jeu_manuel.w = LARGEUR / 2 - 140;
+	jeu_manuel.h = 200;
+	jeu_manuel.x = LARGEUR/2+80;
+	jeu_manuel.y = HAUTEUR / 2 - jeu_manuel.h / 2;
+	SDL_RenderDrawRect(rendu, &jeu_manuel);
+	SDL_RenderDrawLine(rendu,LARGEUR/2,40+titre.h,LARGEUR/2,HAUTEUR);
 }
 
 
@@ -35,6 +44,12 @@ int main(int argn, char* argv[]) {
 		cout << "Echec à l’ouverture";
 		return 1;
 	}
+	else if (TTF_Init() == -1)
+	{
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+
 
 	//on crée la fenêtre
 	SDL_Window* win = SDL_CreateWindow("Menu Principal",

@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 extern "C" FILE* __cdecl __iob_func()
 {
 	struct _iobuf_VS2012 { // ...\Microsoft Visual Studio 11.0\VC\include\stdio.h #56
