@@ -9,7 +9,7 @@ SDL_Color blanc = { 255,255,255 };
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
-const int N = 6;
+const int N = 4;
 
 void interface_auto(SDL_Renderer* rendu) {
 
@@ -70,28 +70,30 @@ void interface(SDL_Renderer* rendu) {
 struct Bamboo {
 	int taille;
 	int croissance;
-	int x;
-	int y;
 };
 
-void Aléatoire(Bamboo* tab,int taille) {
+void Aléatoire(Bamboo tab[][N], int taille) {
 	srand(time(NULL));
 	for (int i = 0; i < taille; i++) {
-		tab[i].croissance = rand() % 20;
-	}
-}
-
-int Reduce_Max(Bamboo* tab, int taille) {
-	int max = 0;
-	for (int i = 0; i < taille; i++) {
-		if (tab[i].taille > max) {
-			max = i;
+		for (int j = 0; j < taille; j++) {
+			tab[i][j].croissance = rand() % 20;
+			tab[i][j].taille = 5;
 		}
 	}
-	tab[max].taille = 0;
-	return(max);
 }
 
+void Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
+	int max = 0;
+	for (int i = 0; i < taille; i++) {
+		for (int j = 0; j < taille; i++) {
+			if (tab[i][j].taille > max) {
+				max = tab[i][j].taille;
+				a = i;
+				b = j;
+			}
+		}
+	}
+}
 
 int panda(SDL_Renderer* rendu, int x, int y) {
 	SDL_Surface* image = IMG_Load("panda1.PNG");
@@ -112,8 +114,6 @@ int panda(SDL_Renderer* rendu, int x, int y) {
 	SDL_RenderCopy(rendu, monImage, NULL, &posImg);
 	SDL_RenderPresent(rendu);
 }
-
-
 void Left(SDL_Renderer* rendu, int& x, int& y) {
 	SDL_Rect RobotLft;
 	RobotLft.x = x + 1;
@@ -127,7 +127,6 @@ void Left(SDL_Renderer* rendu, int& x, int& y) {
 
 	panda(rendu, x, y);
 }
-
 void Right(SDL_Renderer* rendu, int& x, int& y) {
 	SDL_Rect RobotRght;
 	RobotRght.x = x + 1;
@@ -167,8 +166,85 @@ void Down(SDL_Renderer* rendu, int& x, int& y) {
 
 	panda(rendu, x, y);
 }
+int jeuAuto(Bamboo tab[][N]) {
+	int x = 145;
+	int y = 720;
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		cout << "Echec à l’ouverture";
+		return 1;
+	}
 
-int jeu() {
+	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR,
+		HAUTEUR,
+		SDL_WINDOW_SHOWN
+	);
+	if (win == NULL)
+		cout << "erreur ouverture fenetre";
+
+	SDL_Renderer* rendu = SDL_CreateRenderer(
+		win,
+		-1,
+		SDL_RENDERER_ACCELERATED);
+
+	interface_auto(rendu);
+	panda(rendu, x, y);
+	SDL_RenderPresent(rendu);
+
+	bool continuer = true;
+	SDL_Event event;
+
+	while (continuer)
+	{
+		SDL_WaitEvent(&event);
+		switch (event.type)
+		{
+		case SDL_QUIT:
+
+			continuer = false;
+			break;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_LEFT && x > 145) {
+				Left(rendu, x, y);
+				SDL_RenderPresent(rendu);
+			}
+			if (event.key.keysym.sym == SDLK_RIGHT && x < 660) {
+				Right(rendu, x, y);
+				SDL_RenderPresent(rendu);
+			}
+			if (event.key.keysym.sym == SDLK_UP && y > 180) {
+				Up(rendu, x, y);
+				SDL_RenderPresent(rendu);
+			}
+			if (event.key.keysym.sym == SDLK_DOWN && y < 720) {
+				Down(rendu, x, y);
+				SDL_RenderPresent(rendu);
+			}
+			if (event.key.keysym.sym == SDLK_RETURN) {
+				SDL_Rect Cut;
+				Cut.x = x - 73;
+				Cut.y = y - 60;
+				Cut.w = 40;
+				Cut.h = 154;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cut);
+				SDL_RenderPresent(rendu);
+			}
+			if (event.key.keysym.sym == SDLK_SPACE) {
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						Tab[i][j].Taille += Tab[i][j].Croissance;
+			}
+		}
+	}
+	SDL_DestroyRenderer(rendu);
+	SDL_DestroyWindow(win);
+	SDL_Quit();
+	return 0;
+}
+int jeuMan(Bamboo tab[][N]) {
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -241,26 +317,8 @@ int jeu() {
 	SDL_Quit();
 	return 0;
 }
-
-struct Bamboo {
-	int taille;
-	int croissance;
-	int x;
-	int y;
-};
-
-int Reduce_Max(Bamboo* tab, int taille) {
-	int max = 0;
-	for (int i = 0; i < taille; i++) {
-		if (tab[i].taille > max) {
-			max = i;
-		}
-	}
-	tab[max].taille = 0;
-	return (max);
-}
-
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
+
 	SDL_Rect titre;
 	titre.x = 80;
 	titre.y = 40;
@@ -329,9 +387,9 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
 
 int main(int argn, char* argv[]) {
-	const int nbr_bamboo = 5;
-
-	Bamboo forest[nbr_bamboo];
+	int i = 0, j = 0;
+	Bamboo Tab[N][N];
+	Aléatoire(Tab, N);
 
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -343,8 +401,6 @@ int main(int argn, char* argv[]) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
-
-
 
 	SDL_Window* win = SDL_CreateWindow("Menu Principal",
 		SDL_WINDOWPOS_CENTERED,
@@ -387,13 +443,16 @@ int main(int argn, char* argv[]) {
 				if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					cout << "ça marche\n";
 					in_menu = false;
+					SDL_DestroyRenderer(rendu);
+					SDL_DestroyWindow(win);
+					jeuAuto(Tab);
 				}
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
-					jeu();
+					jeuMan(Tab);
 				}
 			}
 		}
