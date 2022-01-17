@@ -53,13 +53,17 @@ int Moyenne(int Tab[][N]) {
 }
 
 void stats(SDL_Renderer* rendu,int x1, int y1, int x2, int y2) {
+	
 	SDL_SetRenderDrawColor(rendu,255,255,255,255);
-	SDL_RenderDrawLine( rendu,  x1,y1, x2, y2);
+	SDL_RenderDrawLine( rendu,  0, 25, LARGEUR/2, 25);
 	SDL_RenderPresent(rendu);
 }
 
 int main(int argn, char* argv[]) {//entête imposée
-							  //ouverture de la SDL*
+	
+
+	int x1 = 25, y1 = 25, x2 = 25, y2 = 25;
+	//ouverture de la SDL*
 	struct bambou {
 		int posx;
 		int posy;
@@ -94,6 +98,8 @@ int main(int argn, char* argv[]) {//entête imposée
 
 	SDL_RenderPresent(rendu);
 
+	stats(rendu, x1, y1, x2, y2);
+
 	bool continuer = true;   //booléen fin de programme
 	SDL_Event event;//gestion des évènements souris/clavier, 
 					//SDL_Event est de type struct
@@ -108,6 +114,7 @@ int main(int argn, char* argv[]) {//entête imposée
 			break;
 		}
 	}
+
 	//destruction du renderer à la fin
 	SDL_DestroyRenderer(rendu);
 
@@ -117,10 +124,6 @@ int main(int argn, char* argv[]) {//entête imposée
 	//fermeture
 	SDL_Quit();
 
-	SDL_RenderDrawLine(rendu, 0, 0, 0, 225);
-
-	cout << " Donnez un nombre de bambous";
-	
 
 	return 0;
 }
