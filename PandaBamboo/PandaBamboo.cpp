@@ -30,10 +30,12 @@ void Aléatoire(bambou tablo[]) {
 int HauteurMax(int Tab[][N]) {
 
 	int HauteurMax = 0;
-	for (int j = 0; j < N; j++) {
-		if (j > HauteurMax) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0, j < N, j++) {
 
-			HauteurMax = j;
+			if (Tab[i][j] > HauteurMax) {
+				HauteurMax = Tab[i][j];
+			}
 		}
 	}
 	return HauteurMax;
