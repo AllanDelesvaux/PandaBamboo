@@ -53,6 +53,13 @@ int Moyenne(int Tab[][N]) {
 
 }
 
+void abcisse(SDL_Renderer* rendu, int x1, int y1, int x2, int y2) {
+
+	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+	SDL_SetRenderDrawLine(255, 0, Largeur / 2, 255);
+	SDL_RenderPresent(rendu);
+
+}
 
 int main(int argn, char* argv[]) {//entête imposée
 							  //ouverture de la SDL*
@@ -112,14 +119,6 @@ int main(int argn, char* argv[]) {//entête imposée
 
 	//fermeture
 	SDL_Quit();
-
-	cout << " Donnez un nombre de bambous";
-
-	// fenêtre des stats
-
-
-
-	
 
 	return 0;
 }
