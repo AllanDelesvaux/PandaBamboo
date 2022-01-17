@@ -30,10 +30,12 @@ void Aléatoire(bambou tablo[]) {
 int HauteurMax(int Tab[][N]) {
 
 	int HauteurMax = 0;
-	for (int j = 0; j < N; j++) {
-		if (j > HauteurMax) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
 
-			HauteurMax = j;
+			if (Tab[i][j] > HauteurMax) {
+				HauteurMax = Tab[i][j];
+			}
 		}
 	}
 	return HauteurMax;
@@ -46,10 +48,9 @@ int Moyenne(int Tab[][N]) {
 		somme = Tab[N][N] + Tab[N+1][N + 1];
 	}
 	int moyenne;
-
 	moyenne = somme / N;
-
 	return moyenne;
+
 }
 
 void stats(SDL_Renderer* rendu,int x1, int y1, int x2, int y2) {
