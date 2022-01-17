@@ -156,6 +156,7 @@ int main(int argn, char* argv[]) {
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					cout << "ça marche\n";
 					in_menu = false;
+					jeu();
 				}
 			}
 		}
