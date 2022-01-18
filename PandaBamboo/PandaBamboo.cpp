@@ -43,52 +43,7 @@ void interface_auto(SDL_Renderer* rendu) {
 		}
 	}
 }
-/*void interface(SDL_Renderer* rendu) {
-	for (int i = 20; i < 820; i += 200) {
-		for (int j = 20; j < 820; j += 200) {
-			SDL_Rect bamboo;
-			bamboo.x = j + 63;
-			bamboo.y = i + 60;
-			bamboo.w = 10;
-			bamboo.h = 139;
-			SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-			SDL_RenderFillRect(rendu, &bamboo);
 
-			for (int k = i; k < i + 139; k += 30) {
-				SDL_Rect bambooIncrease;
-				bambooIncrease.x = j + 60;
-				bambooIncrease.y = k + 60;
-				bambooIncrease.w = 16;
-				bambooIncrease.h = 3;
-				SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-				SDL_RenderFillRect(rendu, &bambooIncrease);
-			}
-		}
-	}
-}*/
-/*void FUCK(SDL_Renderer* rendu, Bamboo tab[][N]) {
-	for (int i = 0; i < N; i += 1) {
-		for (int j = 0; j < N; j += 1) {
-			SDL_Rect bamboo;
-			bamboo.x = j * 200 + 83;
-			bamboo.y = i * 200 + 80;
-			bamboo.w = 10;
-			bamboo.h = tab[i][j].taille;
-			SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-			SDL_RenderFillRect(rendu, &bamboo);
-
-			for (int k = i * 200 + 20; k < i * 200 + 159; k += tab[i][j].croissance) {
-				SDL_Rect bambooIncrease;
-				bambooIncrease.x = j * 200 + 80;
-				bambooIncrease.y = k + 60;
-				bambooIncrease.w = 16;
-				bambooIncrease.h = 3;
-				SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-				SDL_RenderFillRect(rendu, &bambooIncrease);
-			}
-		}
-	}
-}*/
 struct Bamboo {
 	int taille;
 	int croissance;
@@ -102,10 +57,10 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 		}
 	}
 }
-int Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
+int Reduce_Max(Bamboo tab[][N], int N, int &a, int &b) {
 	int max = 0;
-	for (int i = 0; i < taille; i++) {
-		for (int j = 0; j <= taille; i++) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
 			if (tab[i][j].taille > max) {
 				max = tab[i][j].taille;
 				a = i;
@@ -189,8 +144,8 @@ void Down(SDL_Renderer* rendu, int& x, int& y) {
 int jeuAuto() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
-	int i = 0;
-	int j = 0;
+	int a = 0;
+	int b = 0;
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -214,49 +169,50 @@ int jeuAuto() {
 		SDL_RENDERER_ACCELERATED);
 
 	interface_auto(rendu);
-	while (Reduce_Max(Tab, N, i, j) < 175) {
-		for (int a = 0; a < N; a++) {
-			for (int b = 0; b < N; b++) {
-				Tab[a][b].taille += Tab[a][b].croissance;
+	while (Reduce_Max(Tab, N, a, b) <= 175) {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				Tab[i][j].taille += Tab[i][j].croissance;
 			}
 		}
 		//FUCK(rendu, Tab);
-		for (int i = 0; i < N; i += 1) {
-			for (int j = 0; j < N; j += 1) {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
 				SDL_Rect bamboo;
 				bamboo.x = j * 200 + 83;
-				bamboo.y = i * 200 + 80;
+				bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 				bamboo.w = 10;
 				bamboo.h = Tab[i][j].taille;
 				SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
 				SDL_RenderFillRect(rendu, &bamboo);
+				
 
-				for (int k = i * 200 + 20; k < i * 200 + 159; k += Tab[i][j].croissance) {
-					SDL_Rect bambooIncrease;
-					bambooIncrease.x = j * 200 + 80;
-					bambooIncrease.y = k + 60;
-					bambooIncrease.w = 16;
-					bambooIncrease.h = 3;
-					SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-					SDL_RenderFillRect(rendu, &bambooIncrease);
-				}
+				SDL_Rect bambooStep;
+				bambooStep.x = j * 200 + 80;
+				bambooStep.y = (i + 1) * 200 + 19 - Tab[i][j].taille;
+				bambooStep.w = 16;
+				bambooStep.h = 2;
+				SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+				SDL_RenderFillRect(rendu, &bambooStep);
+				SDL_RenderPresent(rendu);
+
 			}
 		}
 		SDL_RenderPresent(rendu);
 		SDL_Rect Cut;
-		Cut.x = x + 200 * j - 73;
-		Cut.y = y - 200 * i - 60;
+		Cut.x = x + 200 * b - 73;
+		Cut.y = y - 200 * a - 60;
 		Cut.w = 40;
 		Cut.h = 154;
 		SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 		SDL_RenderFillRect(rendu, &Cut);
 		SDL_RenderPresent(rendu);
-		panda(rendu, x + 200 * j + 1, y + 200 * i + 1);
+		panda(rendu, x + 200 * b + 1, y + 200 * a + 1);
 		SDL_RenderPresent(rendu);
-
+		SDL_Delay(1000);
+	}
 		bool continuer = true;
 		SDL_Event event;
-
 		while (continuer) {
 			SDL_WaitEvent(&event);
 			switch (event.type)
@@ -267,7 +223,6 @@ int jeuAuto() {
 				break;
 			}
 		}
-	}
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
