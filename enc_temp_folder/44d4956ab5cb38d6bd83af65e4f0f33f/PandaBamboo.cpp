@@ -61,9 +61,6 @@ void interface_auto(SDL_Renderer* rendu) {
 }
 
 void jeu_ui(SDL_Renderer* rendu ) {
-	SDL_Rect input;
-	input.x;
-	input.y;
 
 }
 
