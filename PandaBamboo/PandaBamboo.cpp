@@ -27,14 +27,14 @@ void Aléatoire(bambou tablo[N]) {
 	}
 }
 
-int HauteurMax(int Tab[N][N]) {
+int HauteurMax(bambou Tab[N][N]) {
 
-	int HauteurMax = 0;
+	int HauteurMax;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 
-			if (Tab[i][j] > HauteurMax) {
-				HauteurMax = Tab[i][j];
+			if (Tab[i][j].hauteur > HauteurMax) {
+				HauteurMax = Tab[i][j].hauteur;
 			}
 		}
 	}
@@ -62,11 +62,13 @@ void abcisse(SDL_Renderer* rendu,int x1, int y1, int x2, int y2) {
 
 void ordonnée(SDL_Renderer* rendu, int x1, int y1, int x2, int y2) {
 
-	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
 	SDL_RenderDrawLine(rendu, 0, 0, 0, 525);
 	SDL_RenderPresent(rendu);
 
 }
+
+
 
 int main(int argn, char* argv[]) {//entête imposée
 	
