@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "config_sdl.h"
+#include <ctime>
 using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
@@ -65,7 +66,7 @@ void interface_auto(SDL_Renderer* rendu) {
 		}
 	}
 }*/
-void FUCK(SDL_Renderer* rendu, Bamboo tab[][N]) {
+/*void FUCK(SDL_Renderer* rendu, Bamboo tab[][N]) {
 	for (int i = 0; i < N; i += 1) {
 		for (int j = 0; j < N; j += 1) {
 			SDL_Rect bamboo;
@@ -87,7 +88,7 @@ void FUCK(SDL_Renderer* rendu, Bamboo tab[][N]) {
 			}
 		}
 	}
-}
+}*/
 struct Bamboo {
 	int taille;
 	int croissance;
@@ -104,7 +105,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 int Reduce_Max(Bamboo tab[][N], int taille, int &a, int &b) {
 	int max = 0;
 	for (int i = 0; i < taille; i++) {
-		for (int j = 0; j < taille; i++) {
+		for (int j = 0; j <= taille; i++) {
 			if (tab[i][j].taille > max) {
 				max = tab[i][j].taille;
 				a = i;
@@ -219,7 +220,28 @@ int jeuAuto() {
 				Tab[a][b].taille += Tab[a][b].croissance;
 			}
 		}
-		FUCK(rendu, Tab);
+		//FUCK(rendu, Tab);
+		for (int i = 0; i < N; i += 1) {
+			for (int j = 0; j < N; j += 1) {
+				SDL_Rect bamboo;
+				bamboo.x = j * 200 + 83;
+				bamboo.y = i * 200 + 80;
+				bamboo.w = 10;
+				bamboo.h = Tab[i][j].taille;
+				SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+				SDL_RenderFillRect(rendu, &bamboo);
+
+				for (int k = i * 200 + 20; k < i * 200 + 159; k += Tab[i][j].croissance) {
+					SDL_Rect bambooIncrease;
+					bambooIncrease.x = j * 200 + 80;
+					bambooIncrease.y = k + 60;
+					bambooIncrease.w = 16;
+					bambooIncrease.h = 3;
+					SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+					SDL_RenderFillRect(rendu, &bambooIncrease);
+				}
+			}
+		}
 		SDL_RenderPresent(rendu);
 		SDL_Rect Cut;
 		Cut.x = x + 200 * j - 73;
@@ -325,7 +347,28 @@ int jeuMan() {
 						Tab[i][j].taille += Tab[i][j].croissance;
 					}
 				}
-				FUCK(rendu,Tab);
+				//FUCK(rendu,Tab);
+				for (int i = 0; i < N; i += 1) {
+					for (int j = 0; j < N; j += 1) {
+						SDL_Rect bamboo;
+						bamboo.x = j * 200 + 83;
+						bamboo.y = i * 200 + 80;
+						bamboo.w = 10;
+						bamboo.h = Tab[i][j].taille;
+						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+						SDL_RenderFillRect(rendu, &bamboo);
+
+						for (int k = i * 200 + 20; k < i * 200 + 159; k += Tab[i][j].croissance) {
+							SDL_Rect bambooIncrease;
+							bambooIncrease.x = j * 200 + 80;
+							bambooIncrease.y = k + 60;
+							bambooIncrease.w = 16;
+							bambooIncrease.h = 3;
+							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+							SDL_RenderFillRect(rendu, &bambooIncrease);
+						}
+					}
+				}
 				SDL_RenderPresent(rendu);
 			}
 		}
@@ -403,7 +446,7 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
 }
 int main(int argn, char* argv[]) {
-	
+
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
