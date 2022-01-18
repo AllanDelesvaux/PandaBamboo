@@ -61,6 +61,19 @@ int Reduce_Max(Bamboo tab[][N], int N, int &a, int &b) {
 	}
 	return max;
 }
+int Min(Bamboo tab[][N], int N, int& a, int& b) {
+	int min = 200;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (tab[i][j].taille < min) {
+				min = tab[i][j].taille;
+				a = i;
+				b = j;
+			}
+		}
+	}
+	return min;
+}
 int panda(SDL_Renderer* rendu, int x, int y) {
 	SDL_Surface* image = IMG_Load("panda1.PNG");
 	if (!image)
