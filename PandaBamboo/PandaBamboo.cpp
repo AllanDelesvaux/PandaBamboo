@@ -48,7 +48,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 		}
 	}
 }
-int Reduce_Max(Bamboo tab[][N], int N, int &a, int &b) {
+int Reduce_Max(Bamboo tab[][N], int &a, int &b) {
 	int max = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -244,9 +244,53 @@ void GraphStats(SDL_Renderer* rendu) {
 	SDL_RenderDrawLine(rendu, 1175, 590, 1165, 600);
 	SDL_RenderPresent(rendu);
 }
+void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[], int &a, int &c) {
+	SDL_Rect Graph;
+	Graph.x = 850;
+	Graph.y = 290;
+	Graph.w = 335;
+	Graph.h = 300;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderFillRect(rendu, &Graph);
+	for(int i=c;i<100+c;i++){
+
+		a = 850 + (i - c) * 3;
+		SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[i%100], a+3, 290+ TabMoy[i%100]);
+		SDL_RenderPresent(rendu);
+
+		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+		SDL_RenderDrawLine(rendu, a, 390 + TabMax[i % 100], a+3, 390 + TabMax[i % 100]);
+		SDL_RenderPresent(rendu);
+
+		SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
+		SDL_RenderDrawLine(rendu, a, 490 + TabMin[i % 100], a+3, 490 +TabMin[i % 100]);
+		SDL_RenderPresent(rendu);
+
+	}
+	a = 850;
+}
+void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int &c) {
+	int e;
+	int h;
+	if(o==100){
+		o = 0;
+		c++;
+	}
+	TabMoy[o] = Moyenne(Tab);
+	TabMin[o] = Min(Tab);
+	TabMax[o] = Reduce_Max(Tab, e, h);
+	o++;
+}
 int jeuAuto() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
+	int TabMoy[100]={ 0 };
+	int TabMax[100]={ 0 };
+	int TabMin[100]={ 0 };
+	int positionx1 = 850;
+	int c = 0;
+	int o = 0;
 	int a = 0;
 	int b = 0;
 	int x = 145;
@@ -293,7 +337,7 @@ int jeuAuto() {
 			break;
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_t) {
-				while (Reduce_Max(Tab, N, a, b) < 170) {
+				while (Reduce_Max(Tab, a, b) < 170) {
 					for (int i = 0; i < N; i++) {
 						for (int j = 0; j < N; j++) {
 							Tab[i][j].taille += Tab[i][j].croissance;
@@ -340,7 +384,9 @@ int jeuAuto() {
 					a1 = a;
 					b1 = b;
 					SDL_RenderPresent(rendu);
-					SDL_Delay(1000);
+					SDL_Delay(100);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 			}
 		}
@@ -354,6 +400,13 @@ int jeuAuto() {
 int jeuMan(){
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
+	int TabMoy[100] = { 0 };
+	int TabMax[100] = { 0 };
+	int TabMin[100] = { 0 };
+	int positionx1 = 850;
+	int w = 0;
+	int c = 0;
+	int o = 0;
 	int a = 0;
 	int b = 0;
 	int x = 145;
@@ -390,7 +443,7 @@ int jeuMan(){
 	bool continuer = true;
 	SDL_Event event;
 
-	while (continuer && Reduce_Max(Tab, N, a, b) < 170)
+	while (continuer && Reduce_Max(Tab, a, b) < 175)
 	{
 		SDL_WaitEvent(&event);
 		switch (event.type)
@@ -452,7 +505,11 @@ int jeuMan(){
 
 					}
 				}
-				SDL_RenderPresent(rendu);
+				if (w % 5 == 0) {
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+				}
+				w++;
 			}
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
@@ -481,7 +538,11 @@ int jeuMan(){
 
 					}
 				}
-				SDL_RenderPresent(rendu);
+				if(w%5==0){
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+				}
+				w++;
 			}
 		}
 	}
