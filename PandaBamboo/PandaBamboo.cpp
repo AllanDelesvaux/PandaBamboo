@@ -32,18 +32,9 @@ void interface_auto(SDL_Renderer* rendu) {
 			SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
 			SDL_RenderFillRect(rendu, &MaxHauteur);
 
-			SDL_Rect bambooSeparation;
-			bambooSeparation.x = j + 125;
-			bambooSeparation.y = i + 100;
-			bambooSeparation.w = 75;
-			bambooSeparation.h = 100;
-			SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
-			SDL_RenderDrawRect(rendu, &bambooSeparation);
-
 		}
 	}
 }
-
 struct Bamboo {
 	int taille;
 	int croissance;
@@ -52,7 +43,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 	srand(time(NULL));
 	for (int i = 0; i < taille; i++) {
 		for (int j = 0; j < taille; j++) {
-			tab[i][j].croissance = rand() % 20;
+			tab[i][j].croissance = rand() % 10 + 5;
 			tab[i][j].taille = 5;
 		}
 	}
@@ -141,6 +132,76 @@ void Down(SDL_Renderer* rendu, int& x, int& y) {
 
 	panda(rendu, x, y);
 }
+void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
+
+	SDL_Rect spaceUtility;
+	spaceUtility.x = 20;
+	spaceUtility.y = 840;
+	spaceUtility.w = 390;
+	spaceUtility.h = 40;
+
+	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &spaceUtility);
+
+	SDL_Rect ReturnUtility;
+	ReturnUtility.x = 430;
+	ReturnUtility.y = 840;
+	ReturnUtility.w = 390;
+	ReturnUtility.h = 40;
+
+	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &ReturnUtility);
+
+	SDL_Texture* texture1 = loadText(rendu, "Space = 1 Day ", blanc, font);
+	SDL_QueryTexture(texture1, NULL, NULL, &spaceUtility.w, &spaceUtility.h);
+	SDL_RenderCopy(rendu, texture1, NULL, &spaceUtility);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture1);
+
+	SDL_Texture* texture2 = loadText(rendu, "Return = Cut", blanc, font);
+	SDL_QueryTexture(texture1, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
+	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture2);
+
+	SDL_RenderPresent(rendu);
+
+}
+void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
+
+	SDL_Rect spaceUtility;
+	spaceUtility.x = 20;
+	spaceUtility.y = 840;
+	spaceUtility.w = 390;
+	spaceUtility.h = 40;
+
+	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &spaceUtility);
+
+	SDL_Rect ReturnUtility;
+	ReturnUtility.x = 430;
+	ReturnUtility.y = 840;
+	ReturnUtility.w = 390;
+	ReturnUtility.h = 40;
+
+	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &ReturnUtility);
+
+	SDL_Texture* texture1 = loadText(rendu, "Space = 1 Day ", blanc, font);
+	SDL_QueryTexture(texture1, NULL, NULL, &spaceUtility.w, &spaceUtility.h);
+	SDL_RenderCopy(rendu, texture1, NULL, &spaceUtility);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture1);
+
+	SDL_Texture* texture2 = loadText(rendu, "Return = Cut", blanc, font);
+	SDL_QueryTexture(texture1, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
+	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture2);
+
+	SDL_RenderPresent(rendu);
+
+}
 int jeuAuto() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
@@ -148,8 +209,10 @@ int jeuAuto() {
 	int b = 0;
 	int x = 145;
 	int y = 720;
+	int a1 = 0;
+	int b1 = 0;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cout << "Echec à l’ouverture";
+		std::cout << "Echec à l’ouverture";
 		return 1;
 	}
 
@@ -161,59 +224,88 @@ int jeuAuto() {
 		SDL_WINDOW_SHOWN
 	);
 	if (win == NULL)
-		cout << "erreur ouverture fenetre";
+		std::cout << "erreur ouverture fenetre";
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
 		win,
 		-1,
 		SDL_RENDERER_ACCELERATED);
-	interface_auto(rendu);
-	while (Reduce_Max(Tab, N, a, b) < 175) {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				Tab[i][j].taille += Tab[i][j].croissance;
-			}
-		}
-		//FUCK(rendu, Tab);
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				SDL_Rect bamboo;
-				bamboo.x = j * 200 + 83;
-				bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-				bamboo.w = 10;
-				bamboo.h = Tab[i][j].taille;
-				SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-				SDL_RenderFillRect(rendu, &bamboo);
-				
 
-				SDL_Rect bambooStep;
-				bambooStep.x = j * 200 + 80;
-				bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-				bambooStep.w = 16;
-				bambooStep.h = 2;
-				SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-				SDL_RenderFillRect(rendu, &bambooStep);
-				SDL_RenderPresent(rendu);
+	TTF_Init();
+	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 30);
+	TTF_Quit();
+	interface_auto(rendu);
+	legendeAuto(rendu, font);
+	bool continuer = true;
+	SDL_Event event;
+	SDL_Delay(1000);
+	while (continuer)
+	{
+		SDL_WaitEventTimeout(&event,1000);
+		switch (event.type)
+		{
+		case SDL_QUIT:
+
+			continuer = false;
+			break;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_t) {
+				while (Reduce_Max(Tab, N, a, b) < 170) {
+					for (int i = 0; i < N; i++) {
+						for (int j = 0; j < N; j++) {
+							Tab[i][j].taille += Tab[i][j].croissance;
+						}
+					}
+					for (int i = 0; i < N; i++) {
+						for (int j = 0; j < N; j++) {
+							SDL_Rect bamboo;
+							bamboo.x = j * 200 + 83;
+							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+							bamboo.w = 10;
+							bamboo.h = Tab[i][j].taille;
+							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+							SDL_RenderFillRect(rendu, &bamboo);
+
+							SDL_Rect bambooStep;
+							bambooStep.x = j * 200 + 80;
+							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+							bambooStep.w = 16;
+							bambooStep.h = 2;
+							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+							SDL_RenderFillRect(rendu, &bambooStep);
+							SDL_RenderPresent(rendu);
+						}
+					}
+					SDL_RenderPresent(rendu);
+					SDL_Rect Cut;
+					Cut.x = b * 200 + 73;
+					Cut.y = (a + 1) * 200 - 155;
+					Cut.w = 40;
+					Cut.h = 169;
+					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+					SDL_RenderFillRect(rendu, &Cut);
+					SDL_RenderPresent(rendu);
+					Tab[a][b].taille = 5;
+					panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
+					SDL_Rect Cutpanda;
+					Cutpanda.x = b1 * 200 + 146;
+					Cutpanda.y = (a1 + 1) * 200 - 79;
+					Cutpanda.w = 73;
+					Cutpanda.h = 98;
+					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+					SDL_RenderFillRect(rendu, &Cutpanda);
+					a1 = a;
+					b1 = b;
+					SDL_RenderPresent(rendu);
+					SDL_Delay(1000);
+				}
 			}
 		}
-		SDL_RenderPresent(rendu);
-		SDL_Rect Cut;
-		Cut.x = b * 200 + 73 ;
-		Cut.y = (a+1) * 200 - 155;
-		Cut.w = 40;
-		Cut.h = 169;
-		SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-		SDL_RenderFillRect(rendu, &Cut);
-		SDL_RenderPresent(rendu);
-		Tab[a][b].taille = 5;
-		panda(rendu, x + 200 * b + 1, y + 200 * a + 1);
-		SDL_RenderPresent(rendu);
-		SDL_Delay(1000);
 	}
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
-	cout << "perdu";
+	std::cout << "perdu";
 	return 0;
 }  
 int jeuMan() {
@@ -224,7 +316,7 @@ int jeuMan() {
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cout << "Echec à l’ouverture";
+		std::cout << "Echec à l’ouverture";
 		return 1;
 	}
 
@@ -236,21 +328,25 @@ int jeuMan() {
 		SDL_WINDOW_SHOWN
 	);
 	if (win == NULL)
-		cout << "erreur ouverture fenetre";
+		std::cout << "erreur ouverture fenetre";
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
 		win,
 		-1,
 		SDL_RENDERER_ACCELERATED);
 
+	TTF_Init();
+	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 30);
+	TTF_Quit();
 	interface_auto(rendu);
 	panda(rendu, x, y);
 	SDL_RenderPresent(rendu);
+	legendeMan(rendu,font);
 
 	bool continuer = true;
 	SDL_Event event;
 
-	while (continuer && Reduce_Max(Tab, N, a, b) <= 175)
+	while (continuer && Reduce_Max(Tab, N, a, b) < 170)
 	{
 		SDL_WaitEvent(&event);
 		switch (event.type)
@@ -286,6 +382,33 @@ int jeuMan() {
 				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 				SDL_RenderFillRect(rendu, &Cut);
 				SDL_RenderPresent(rendu);
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						Tab[i][j].taille += Tab[i][j].croissance;
+					}
+				}
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						SDL_Rect bamboo;
+						bamboo.x = j * 200 + 83;
+						bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+						bamboo.w = 10;
+						bamboo.h = Tab[i][j].taille;
+						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+						SDL_RenderFillRect(rendu, &bamboo);
+
+						SDL_Rect bambooStep;
+						bambooStep.x = j * 200 + 80;
+						bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+						bambooStep.w = 16;
+						bambooStep.h = 2;
+						SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+						SDL_RenderFillRect(rendu, &bambooStep);
+						SDL_RenderPresent(rendu);
+
+					}
+				}
+				SDL_RenderPresent(rendu);
 			}
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
@@ -302,7 +425,6 @@ int jeuMan() {
 						bamboo.h = Tab[i][j].taille;
 						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
 						SDL_RenderFillRect(rendu, &bamboo);
-
 
 						SDL_Rect bambooStep;
 						bambooStep.x = j * 200 + 80;
@@ -322,7 +444,7 @@ int jeuMan() {
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
-	cout << "Vous avez perdu !";
+	std::cout << "Vous avez perdu !";
 	return 0;
 } 
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
@@ -396,7 +518,7 @@ int main(int argn, char* argv[]) {
 
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cout << "Echec à l’ouverture";
+		std::cout << "Echec à l’ouverture";
 		return 1;
 	}
 	else if (TTF_Init() == -1)
@@ -414,7 +536,7 @@ int main(int argn, char* argv[]) {
 	);
 
 	if (win == NULL)
-		cout << "erreur ouverture fenetre";
+		std::cout << "erreur ouverture fenetre";
 
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
@@ -444,14 +566,14 @@ int main(int argn, char* argv[]) {
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT && in_menu) {
 				if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
-					cout << "ça marche\n";
+					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
 					jeuAuto();
 				}
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
-					cout << "ça marche\n";
+					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
