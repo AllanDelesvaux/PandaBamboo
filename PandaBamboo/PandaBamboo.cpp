@@ -6,7 +6,7 @@
 using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
-SDL_Color blanc = {255,255,255};
+SDL_Color blanc = { 255,255,255 };
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
@@ -48,7 +48,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 		}
 	}
 }
-int Reduce_Max(Bamboo tab[][N], int &a, int &b) {
+int Reduce_Max(Bamboo tab[][N], int& a, int& b) {
 	int max = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -74,14 +74,14 @@ int Min(Bamboo tab[][N]) {
 }
 int Moyenne(Bamboo Tab[][N]) {
 
-	int somme=0;
+	int somme = 0;
 	for (int j = 0; j < N; j++) {
 		for (int i = 0; i < N; i++) {
 			somme = somme + Tab[j][i].taille;
 		}
 	}
 	int moyenne;
-	moyenne = somme / N*N;
+	moyenne = somme / N * N;
 	return moyenne;
 
 }
@@ -244,7 +244,7 @@ void GraphStats(SDL_Renderer* rendu) {
 	SDL_RenderDrawLine(rendu, 1175, 590, 1165, 600);
 	SDL_RenderPresent(rendu);
 }
-void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[], int &a, int &c) {
+void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[], int& a, int& c) {
 	SDL_Rect Graph;
 	Graph.x = 850;
 	Graph.y = 290;
@@ -252,28 +252,28 @@ void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[],
 	Graph.h = 300;
 	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
 	SDL_RenderFillRect(rendu, &Graph);
-	for(int i=c;i<100+c;i++){
+	for (int i = c; i < 100 + c; i++) {
 
 		a = 850 + (i - c) * 3;
 		SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
-		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[i%100], a+3, 290+ TabMoy[i%100]);
+		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[i % 100], a + 3, 290 + TabMoy[i % 100]);
 		SDL_RenderPresent(rendu);
 
 		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-		SDL_RenderDrawLine(rendu, a, 390 + TabMax[i % 100], a+3, 390 + TabMax[i % 100]);
+		SDL_RenderDrawLine(rendu, a, 390 + TabMax[i % 100], a + 3, 390 + TabMax[i % 100]);
 		SDL_RenderPresent(rendu);
 
 		SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
-		SDL_RenderDrawLine(rendu, a, 490 + TabMin[i % 100], a+3, 490 +TabMin[i % 100]);
+		SDL_RenderDrawLine(rendu, a, 490 + TabMin[i % 100], a + 3, 490 + TabMin[i % 100]);
 		SDL_RenderPresent(rendu);
 
 	}
 	a = 850;
 }
-void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int &c) {
+void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c) {
 	int e;
 	int h;
-	if(o==100){
+	if (o == 100) {
 		o = 0;
 		c++;
 	}
@@ -285,9 +285,9 @@ void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, in
 int jeuAuto() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
-	int TabMoy[100]={ 0 };
-	int TabMax[100]={ 0 };
-	int TabMin[100]={ 0 };
+	int TabMoy[100] = { 0 };
+	int TabMax[100] = { 0 };
+	int TabMin[100] = { 0 };
 	int positionx1 = 850;
 	int c = 0;
 	int o = 0;
@@ -328,7 +328,7 @@ int jeuAuto() {
 	SDL_Delay(1000);
 	while (continuer)
 	{
-		SDL_WaitEventTimeout(&event,1000);
+		SDL_WaitEventTimeout(&event, 1000);
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -396,8 +396,8 @@ int jeuAuto() {
 	SDL_Quit();
 	std::cout << "perdu";
 	return 0;
-}  
-int jeuMan(){
+}
+int jeuMan() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
 	int TabMoy[100] = { 0 };
@@ -437,7 +437,7 @@ int jeuMan(){
 	interface_auto(rendu);
 	panda(rendu, x, y);
 	SDL_RenderPresent(rendu);
-	legendeMan(rendu,font);
+	legendeMan(rendu, font);
 	GraphStats(rendu);
 
 	bool continuer = true;
@@ -538,7 +538,7 @@ int jeuMan(){
 
 					}
 				}
-				if(w%5==0){
+				if (w % 5 == 0) {
 					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
@@ -551,7 +551,7 @@ int jeuMan(){
 	SDL_Quit();
 	std::cout << "Vous avez perdu !";
 	return 0;
-} 
+}
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
 	SDL_Rect titre;
