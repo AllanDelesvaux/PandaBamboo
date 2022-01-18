@@ -6,7 +6,7 @@
 using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
-SDL_Color blanc = { 255,255,255 };
+SDL_Color blanc = {255,255,255};
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
@@ -61,18 +61,29 @@ int Reduce_Max(Bamboo tab[][N], int N, int &a, int &b) {
 	}
 	return max;
 }
-int Min(Bamboo tab[][N], int N, int& a, int& b) {
+int Min(Bamboo tab[][N]) {
 	int min = 200;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			if (tab[i][j].taille < min) {
 				min = tab[i][j].taille;
-				a = i;
-				b = j;
 			}
 		}
 	}
 	return min;
+}
+int Moyenne(Bamboo Tab[][N]) {
+
+	int somme=0;
+	for (int j = 0; j < N; j++) {
+		for (int i = 0; i < N; i++) {
+			somme = somme + Tab[j][i].taille;
+		}
+	}
+	int moyenne;
+	moyenne = somme / N*N;
+	return moyenne;
+
 }
 int panda(SDL_Renderer* rendu, int x, int y) {
 	SDL_Surface* image = IMG_Load("panda1.PNG");
@@ -215,6 +226,24 @@ void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_RenderPresent(rendu);
 
 }
+void GraphStats(SDL_Renderer* rendu) {
+
+	SDL_Rect Graph;
+	Graph.x = 835;
+	Graph.y = 280;
+	Graph.w = 355;
+	Graph.h = 320;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderFillRect(rendu, &Graph);
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawLine(rendu, 845, 290, 845, 590);
+	SDL_RenderDrawLine(rendu, 845, 590, 1175, 590);
+	SDL_RenderDrawLine(rendu, 845, 290, 855, 300);
+	SDL_RenderDrawLine(rendu, 845, 290, 835, 300);
+	SDL_RenderDrawLine(rendu, 1175, 590, 1165, 580);
+	SDL_RenderDrawLine(rendu, 1175, 590, 1165, 600);
+	SDL_RenderPresent(rendu);
+}
 int jeuAuto() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
@@ -249,6 +278,7 @@ int jeuAuto() {
 	TTF_Quit();
 	interface_auto(rendu);
 	legendeAuto(rendu, font);
+	GraphStats(rendu);
 	bool continuer = true;
 	SDL_Event event;
 	SDL_Delay(1000);
@@ -321,7 +351,7 @@ int jeuAuto() {
 	std::cout << "perdu";
 	return 0;
 }  
-int jeuMan() {
+int jeuMan(){
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
 	int a = 0;
@@ -355,6 +385,7 @@ int jeuMan() {
 	panda(rendu, x, y);
 	SDL_RenderPresent(rendu);
 	legendeMan(rendu,font);
+	GraphStats(rendu);
 
 	bool continuer = true;
 	SDL_Event event;
