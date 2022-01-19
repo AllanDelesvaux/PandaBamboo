@@ -42,6 +42,19 @@ void interface_auto(SDL_Renderer* rendu) {
 
 		}
 	}
+	SDL_Texture* redbullimg = loadImage("redbull.png");
+	if (!redbullimg)
+	{
+		printf("Erreur de chargement de l'image : %s", SDL_GetError());
+		
+	}
+	SDL_Rect redbull;
+	redbull.x = 170;
+	redbull.y = 720;
+	SDL_QueryTexture(redbullimg, NULL, NULL, &redbull.w, &redbull.h);
+	SDL_RenderCopy(rendu, redbullimg, NULL, &redbull);
+	SDL_DestroyTexture(redbullimg);
+	
 }
 struct Bamboo {
 	int taille;
@@ -130,6 +143,7 @@ int panda(SDL_Renderer* rendu, int x, int y) {
 
 	SDL_QueryTexture(monImage, NULL, NULL, &posImg.w, &posImg.h);
 	SDL_RenderCopy(rendu, monImage, NULL, &posImg);
+	SDL_DestroyTexture(monImage);
 	SDL_RenderPresent(rendu);
 }
 void Left(SDL_Renderer* rendu, int& x, int& y) {
@@ -225,18 +239,30 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 
 	SDL_Rect quit;
 	quit.x = 845;
-	quit.y = 130;
+	quit.y = 90;
 	quit.w = 320;
 	quit.h = 40;
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 	SDL_RenderDrawRect(rendu, &quit);
+
+	SDL_Rect energy;
+	energy.x = 845;
+	energy.y = 130;
+	energy.w = 320;
+	energy.h = 40;
+	SDL_RenderDrawRect(rendu, &energy);
+
+
+	SDL_Rect energy2;
+	energy2.x = 845;
+	energy2.y = 160;
+	energy2.w = 320;
+	energy2.h = 40;
 
 	SDL_Rect MaxLeg;
 	MaxLeg.x = 845;
 	MaxLeg.y = 670;
 	MaxLeg.w = 320;
 	MaxLeg.h = 40;
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 	SDL_RenderDrawRect(rendu, &MaxLeg);
 
 	SDL_Rect MinLeg;
@@ -244,7 +270,6 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	MinLeg.y = 720;
 	MinLeg.w = 320;
 	MinLeg.h = 40;
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 	SDL_RenderDrawRect(rendu, &MinLeg);
 
 	SDL_Texture* texture3 = loadText(rendu, "Moyenne", rouge, font);
@@ -256,6 +281,17 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_QueryTexture(texture8, NULL, NULL, &quit.w, &quit.h);
 	SDL_RenderCopy(rendu, texture8, NULL, &quit);
 	SDL_DestroyTexture(texture8);
+
+	SDL_Texture* texture9 = loadText(rendu, "Recharger = Y + Entree", blanc, font);
+	SDL_QueryTexture(texture9, NULL, NULL, &energy.w, &energy.h);
+	SDL_RenderCopy(rendu, texture9, NULL, &energy);
+	SDL_DestroyTexture(texture9);
+
+	SDL_Texture* texture10 = loadText(rendu, "sur la foudre.", blanc, font);
+	SDL_QueryTexture(texture10, NULL, NULL, &energy2.w, &energy2.h);
+	SDL_RenderCopy(rendu, texture10, NULL, &energy2);
+	SDL_DestroyTexture(texture10);
+
 
 	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
 	SDL_QueryTexture(texture4, NULL, NULL, &MaxLeg.w, &MaxLeg.h);
@@ -1297,6 +1333,9 @@ int main(int argn, char* argv[]) {
 		switch (event.type)
 		{
 		case SDL_QUIT:
+			SDL_DestroyRenderer(rendu);
+			SDL_DestroyWindow(win);
+			SDL_Quit();
 			continuer = false;
 			break;
 
