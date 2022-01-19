@@ -832,7 +832,13 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
 }
 int main(int argn, char* argv[]) {
-
+	SDL_Init(SDL_INIT_AUDIO);
+	SDL_AudioSpec wavSpec;
+	Uint32 wavLength;
+	Uint8* wavBuffer;
+	SDL_LoadWAV("music.wav", &wavSpec, &wavBuffer, &wavLength);
+	SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
+	bool music = true;
 	SDL_Rect sound;
 	sound.x = NULL;
 	sound.y = NULL;
@@ -861,17 +867,23 @@ int main(int argn, char* argv[]) {
 	if (win == NULL)
 		std::cout << "erreur ouverture fenetre";
 
+	SDL_Surface* icon = IMG_Load("icon.png");
+	SDL_SetWindowIcon(win, icon);
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
 		win,
 		-1,
 		SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawBlendMode(rendu, SDL_BLENDMODE_BLEND);
+
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 60);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 90);
 	TTF_Quit();
 	menu_principal(rendu, font, sound);
-	SDL_RenderPresent(rendu);
+	int success = SDL_QueueAudio(deviceId, wavBuffer, wavLength);
+	SDL_PauseAudioDevice(deviceId, 0);
+
 
 	bool continuer = true;
 	SDL_Event event;
@@ -882,39 +894,58 @@ int main(int argn, char* argv[]) {
 		switch (event.type)
 		{
 		case SDL_QUIT:
-
 			continuer = false;
 			break;
 
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT && in_menu) {
-				if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
+				if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
+					if (music) {
+						SDL_PauseAudioDevice(deviceId, 1);
+						SDL_Texture* audio3 = loadImage(rendu, "audio3.png");
+						SDL_RenderCopy(rendu, audio3, NULL, &sound);
+						SDL_RenderPresent(rendu);
+						SDL_Texture* audio = loadImage(rendu, "audio2.png");
+						SDL_RenderCopy(rendu, audio, NULL, &sound);
+						SDL_RenderPresent(rendu);
+						music = false;
+					}
+					else {
+						SDL_PauseAudioDevice(deviceId, 0);
+						SDL_Texture* audio3 = loadImage(rendu, "audio3.png");
+						SDL_RenderCopy(rendu, audio3, NULL, &sound);
+						SDL_RenderPresent(rendu);
+						SDL_Texture* audio = loadImage(rendu, "audio.png");
+						SDL_RenderCopy(rendu, audio, NULL, &sound);
+						SDL_RenderPresent(rendu);
+						music = true;
+					}
+
+
+				}
+				else if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
 					jeuAuto();
 				}
-				if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
+				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
 					jeuMan();
 				}
-				if (event.button.button == SDL_BUTTON_LEFT && in_menu) {
-					if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
-						SDL_Texture* audio = loadImage(rendu, "audio2.png");
-						SDL_RenderCopy(rendu, audio, NULL, &sound);
-						SDL_RenderPresent(rendu);
-					}
-				}
 			}
 		}
 	}
+	SDL_CloseAudioDevice(deviceId);
+	SDL_FreeWAV(wavBuffer);
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 	return 0;
 }
+
 
