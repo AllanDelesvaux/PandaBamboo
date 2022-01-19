@@ -20,7 +20,7 @@ void in(SDL_Renderer* co) {
 
 }
 
-void interface_auto(SDL_Renderer* rendu) {
+void interface_auto(SDL_Renderer* rendu,bool pourman) {
 
 	for (int i = 20; i < 820; i += 200) {
 		for (int j = 20; j < 820; j += 200) {
@@ -42,18 +42,23 @@ void interface_auto(SDL_Renderer* rendu) {
 
 		}
 	}
-	SDL_Texture* redbullimg = loadImage("redbull.png");
-	if (!redbullimg)
-	{
-		printf("Erreur de chargement de l'image : %s", SDL_GetError());
-		
+	if (pourman) {
+		SDL_Texture* redbullimg = loadImage(rendu, "redbull.png");
+		if (!redbullimg)
+		{
+			printf("Erreur de chargement de l'image : %s", SDL_GetError());
+
+		}
+		SDL_Rect redbull;
+		redbull.x = 160;
+		redbull.y = 660;
+		redbull.w = 50;
+		redbull.h = 40;
+
+		SDL_RenderCopy(rendu, redbullimg, NULL, &redbull);
+		SDL_DestroyTexture(redbullimg);
 	}
-	SDL_Rect redbull;
-	redbull.x = 170;
-	redbull.y = 720;
-	SDL_QueryTexture(redbullimg, NULL, NULL, &redbull.w, &redbull.h);
-	SDL_RenderCopy(rendu, redbullimg, NULL, &redbull);
-	SDL_DestroyTexture(redbullimg);
+	
 	
 }
 struct Bamboo {
@@ -218,12 +223,12 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
 	SDL_RenderDrawRect(rendu, &ReturnUtility);
 
-	SDL_Texture* texture1 = loadText(rendu, "Space = 1 Day ", blanc, font);
+	SDL_Texture* texture1 = loadText(rendu, "Space = Vous avancer d'un jour ", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &spaceUtility.w, &spaceUtility.h);
 	SDL_RenderCopy(rendu, texture1, NULL, &spaceUtility);
 	SDL_DestroyTexture(texture1);
 
-	SDL_Texture* texture2 = loadText(rendu, "Return = Cut", blanc, font);
+	SDL_Texture* texture2 = loadText(rendu, "Return = Couper", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
 	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
 	SDL_DestroyTexture(texture2);
@@ -258,6 +263,13 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	energy2.w = 320;
 	energy2.h = 40;
 
+	SDL_Rect move;
+	move.x = 845;
+	move.y = 210;
+	move.w = 320;
+	move.h = 40;
+
+
 	SDL_Rect MaxLeg;
 	MaxLeg.x = 845;
 	MaxLeg.y = 670;
@@ -291,6 +303,11 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_QueryTexture(texture10, NULL, NULL, &energy2.w, &energy2.h);
 	SDL_RenderCopy(rendu, texture10, NULL, &energy2);
 	SDL_DestroyTexture(texture10);
+
+	SDL_Texture* texture11 = loadText(rendu, "Mouvement Restant :", blanc, font);
+	SDL_QueryTexture(texture11, NULL, NULL, &move.w, &move.h);
+	SDL_RenderCopy(rendu, texture11, NULL, &move);
+	SDL_DestroyTexture(texture11);
 
 
 	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
@@ -656,6 +673,7 @@ int import_conf() {
 	SDL_DestroyWindow(configuration);
 }
 int jeuAuto(bool& menu) {
+	bool tmp = NULL; // est utile pour que l'éclair ne soit pas fait en mode auto
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
 	int TabMoy[10] = { 0 };
@@ -693,7 +711,7 @@ int jeuAuto(bool& menu) {
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
-	interface_auto(autorend);
+	interface_auto(autorend, tmp);
 	legendeAuto(autorend, font);
 	GraphStats(autorend);
 	AfficheRecharge(autorend, recharge);
@@ -969,6 +987,7 @@ int jeuAuto(bool& menu) {
 	return 0;
 }
 int jeuMan(bool& menu) {
+	bool tmp = true;
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
 	int TabMoy[10] = { 0 };
@@ -1006,7 +1025,7 @@ int jeuMan(bool& menu) {
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
-	interface_auto(manrend);
+	interface_auto(manrend,tmp);
 	panda(manrend, x, y);
 	//SDL_RenderPresent(manrend);
 	legendeMan(manrend, font);
