@@ -6,15 +6,18 @@
 using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
-SDL_Color blanc = { 255,255,255 };
-SDL_Color rouge = { 255,0,0 };
-SDL_Color vert = { 0,255,0 };
-SDL_Color bleu = { 0,0,255 };
+SDL_Color blanc = { 255, 255, 255 };
+SDL_Color rouge = { 255, 0, 0 };
+SDL_Color vert = { 0, 255, 0 };
+SDL_Color bleu = { 0, 0, 255 };
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
 const int N = 4;
+void in(SDL_Renderer* co) {
 
+
+}
 void interface_auto(SDL_Renderer* rendu) {
 
 	for (int i = 20; i < 820; i += 200) {
@@ -64,7 +67,8 @@ int Reduce_Max(Bamboo tab[][N], int& a, int& b) {
 	}
 	return max;
 }
-int Min(Bamboo tab[][N]) {
+int Min(Bamboo tab[][N], int a, int b) {
+	tab[a][b].taille = 200;
 	int min = 200;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -73,6 +77,7 @@ int Min(Bamboo tab[][N]) {
 			}
 		}
 	}
+	tab[a][b].taille = 5;
 	return min;
 }
 int Moyenne(Bamboo Tab[][N]) {
@@ -190,6 +195,48 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
 	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture2);
+
+	SDL_Rect MoyenneLeg;
+	MoyenneLeg.x = 845;
+	MoyenneLeg.y = 620;
+	MoyenneLeg.w = 320;
+	MoyenneLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MoyenneLeg);
+
+	SDL_Rect MaxLeg;
+	MaxLeg.x = 845;
+	MaxLeg.y = 670;
+	MaxLeg.w = 320;
+	MaxLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MaxLeg);
+
+	SDL_Rect MinLeg;
+	MinLeg.x = 845;
+	MinLeg.y = 720;
+	MinLeg.w = 320;
+	MinLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MinLeg);
+
+	SDL_Texture* texture3 = loadText(rendu, "Moyenne", rouge, font);
+	SDL_QueryTexture(texture3, NULL, NULL, &MoyenneLeg.w, &MoyenneLeg.h);
+	SDL_RenderCopy(rendu, texture3, NULL, &MoyenneLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture3);
+
+	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
+	SDL_QueryTexture(texture4, NULL, NULL, &MaxLeg.w, &MaxLeg.h);
+	SDL_RenderCopy(rendu, texture4, NULL, &MaxLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture4);
+
+	SDL_Texture* texture5 = loadText(rendu, "Minimum", bleu, font);
+	SDL_QueryTexture(texture5, NULL, NULL, &MinLeg.w, &MinLeg.h);
+	SDL_RenderCopy(rendu, texture5, NULL, &MinLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture5);
 
 	SDL_RenderPresent(rendu);
 
@@ -315,7 +362,7 @@ void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[],
 	}
 	a = 856;
 }
-void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c) {
+void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c, int a, int b) {
 	int e;
 	int h;
 	if (o == 100) {
@@ -323,9 +370,198 @@ void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, in
 		c++;
 	}
 	TabMoy[o] = Moyenne(Tab);
-	TabMin[o] = Min(Tab);
+	TabMin[o] = Min(Tab, a, b);
 	TabMax[o] = Reduce_Max(Tab, e, h);
 	o++;
+}
+void AfficheRecharge(SDL_Renderer* rendu, int taille) {
+	for (int i = 0; i < 7; i++) {
+		SDL_Rect rg;
+		rg.x = 845 + 40 * i;
+		rg.y = 770;
+		rg.w = 40;
+		rg.h = 40;
+		SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+		SDL_RenderDrawRect(rendu, &rg);
+		SDL_RenderPresent(rendu);
+	}
+	for (int i = 0; i < taille; i++) {
+		SDL_Rect rt;
+		rt.x = 846 + 40 * i;
+		rt.y = 771;
+		rt.w = 38;
+		rt.h = 38;
+		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+		SDL_RenderFillRect(rendu, &rt);
+		SDL_RenderPresent(rendu);
+	}
+	for (int i = taille; i < 7; i++) {
+
+		SDL_Rect rt;
+		rt.x = 846 + 40 * i;
+		rt.y = 771;
+		rt.w = 38;
+		rt.h = 38;
+		SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+		SDL_RenderFillRect(rendu, &rt);
+		SDL_RenderPresent(rendu);
+	}
+}
+int create_conf() {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		std::cout << "Echec à l’ouverture";
+		return 1;
+	}
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 25);
+	SDL_Window* configuration = SDL_CreateWindow("Creer une configuration",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR / 4,
+		HAUTEUR / 4,
+		SDL_WINDOW_SHOWN
+	);
+	SDL_Renderer* co = SDL_CreateRenderer(
+		configuration,
+		-1,
+		SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawBlendMode(co, SDL_BLENDMODE_BLEND);
+	// premiere entrée
+	SDL_Rect label_conf;
+	label_conf.x = 20;
+	label_conf.y = 30;
+	label_conf.w = 70;
+	label_conf.h = 30;
+	SDL_Texture* label = loadText(co, "Nom Config:", blanc, font);
+	SDL_QueryTexture(label, NULL, NULL, &label_conf.w, &label_conf.h);
+	SDL_RenderCopy(co, label, NULL, &label_conf);
+	SDL_DestroyTexture(label);
+
+	SDL_Rect nom_conf;
+	nom_conf.x = 135;
+	nom_conf.y = 30;
+	nom_conf.w = 140;
+	nom_conf.h = 30;
+
+	// deuxième entrée
+	SDL_Rect label_conf2;
+	label_conf2.x = 20;
+	label_conf2.y = 80;
+	label_conf2.w = 70;
+	label_conf2.h = 30;
+	SDL_Texture* label2 = loadText(co, "Nombre Bambous:", blanc, font);
+	SDL_QueryTexture(label2, NULL, NULL, &label_conf2.w, &label_conf2.h);
+	SDL_RenderCopy(co, label2, NULL, &label_conf2);
+	SDL_DestroyTexture(label2);
+
+	SDL_Rect nom_conf2;
+	nom_conf2.x = 190;
+	nom_conf2.y = 80;
+	nom_conf2.w = 40;
+	nom_conf2.h = 30;
+
+	SDL_Rect end;
+	end.x = 120;
+	end.y = 140;
+	end.w = 40;
+	end.h = 30;
+	SDL_Texture* label3 = loadText(co, "Create !", blanc, font);
+	SDL_QueryTexture(label3, NULL, NULL, &end.w, &end.h);
+	SDL_RenderCopy(co, label3, NULL, &end);
+	SDL_DestroyTexture(label3);
+
+	// Couleur et Render
+	SDL_SetRenderDrawColor(co, 255, 255, 255, 255);
+	SDL_RenderDrawRect(co, &nom_conf);
+	SDL_RenderDrawRect(co, &label_conf);
+	SDL_RenderDrawRect(co, &nom_conf2);
+	SDL_RenderDrawRect(co, &label_conf2);
+	SDL_RenderDrawRect(co, &end);
+	SDL_RenderPresent(co);
+	SDL_Delay(5000);
+	SDL_DestroyWindow(configuration);
+
+}
+int import_conf() {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		std::cout << "Echec à l’ouverture";
+		return 1;
+	}
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 25);
+	SDL_Window* configuration = SDL_CreateWindow("Importer une config",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR / 4,
+		HAUTEUR / 6,
+		SDL_WINDOW_SHOWN
+	);
+	SDL_Renderer* co = SDL_CreateRenderer(
+		configuration,
+		-1,
+		SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawBlendMode(co, SDL_BLENDMODE_BLEND);
+	// premiere entrée
+	SDL_Rect label_conf;
+	label_conf.x = 20;
+	label_conf.y = 30;
+	label_conf.w = 70;
+	label_conf.h = 30;
+	SDL_Texture* label = loadText(co, "Nom Config:", blanc, font);
+	SDL_QueryTexture(label, NULL, NULL, &label_conf.w, &label_conf.h);
+	SDL_RenderCopy(co, label, NULL, &label_conf);
+	SDL_DestroyTexture(label);
+
+	SDL_Rect nom_conf;
+	nom_conf.x = 135;
+	nom_conf.y = 30;
+	nom_conf.w = 140;
+	nom_conf.h = 30;
+
+	SDL_Rect end;
+	end.x = 120;
+	end.y = 90;
+	end.w = 40;
+	end.h = 30;
+	SDL_Texture* label3 = loadText(co, "Import !", blanc, font);
+	SDL_QueryTexture(label3, NULL, NULL, &end.w, &end.h);
+	SDL_RenderCopy(co, label3, NULL, &end);
+	SDL_DestroyTexture(label3);
+
+
+
+
+	// Couleur et Render
+	SDL_SetRenderDrawColor(co, 255, 255, 255, 255);
+	SDL_RenderDrawRect(co, &nom_conf);
+	SDL_RenderDrawRect(co, &label_conf);
+	SDL_RenderDrawRect(co, &end);
+	SDL_RenderPresent(co);
+	bool continuer = true;
+	SDL_Event event;
+	SDL_Event textinput;
+	// Gestion des évenements
+	while (continuer)
+	{
+		SDL_WaitEvent(&event);
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			SDL_DestroyRenderer(co);
+			SDL_DestroyWindow(configuration);
+			continuer = false;
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
+			}
+
+
+		}
+	}
+
+
+
+	SDL_DestroyRenderer(co);
+	SDL_DestroyWindow(configuration);
 }
 int jeuAuto() {
 	Bamboo Tab[N][N];
@@ -334,20 +570,21 @@ int jeuAuto() {
 	int TabMax[100] = { 0 };
 	int TabMin[100] = { 0 };
 	int positionx1 = 850;
+	int recharge = 7;
 	int c = 0;
 	int o = 0;
 	int a = 0;
 	int b = 0;
 	int x = 145;
 	int y = 720;
-	int a1 = 0;
-	int b1 = 0;
+	int a1 = 3;
+	int b1 = 3;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cout << "Echec à l’ouverture";
 		return 1;
 	}
 
-	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
+	SDL_Window* win = SDL_CreateWindow("Mode Automatique ",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		LARGEUR,
@@ -368,12 +605,14 @@ int jeuAuto() {
 	interface_auto(rendu);
 	legendeAuto(rendu, font);
 	GraphStats(rendu);
+	AfficheRecharge(rendu, recharge);
 	bool continuer = true;
 	SDL_Event event;
+	bool TimePlay = true;
 	SDL_Delay(1000);
 	while (continuer)
 	{
-		SDL_WaitEventTimeout(&event, 1000);
+		SDL_WaitEventTimeout(&event, 800);
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -382,58 +621,105 @@ int jeuAuto() {
 			break;
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_t) {
-				while (Reduce_Max(Tab, a, b) < 170) {
-					for (int i = 0; i < N; i++) {
-						for (int j = 0; j < N; j++) {
-							Tab[i][j].taille += Tab[i][j].croissance;
-						}
-					}
-					for (int i = 0; i < N; i++) {
-						for (int j = 0; j < N; j++) {
-							SDL_Rect bamboo;
-							bamboo.x = j * 200 + 83;
-							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-							bamboo.w = 10;
-							bamboo.h = Tab[i][j].taille;
-							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-							SDL_RenderFillRect(rendu, &bamboo);
+				TimePlay = false;
+			}
+			if (event.key.keysym.sym == SDLK_r) {
+				TimePlay = true;
+			}
 
-							SDL_Rect bambooStep;
-							bambooStep.x = j * 200 + 80;
-							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-							bambooStep.w = 16;
-							bambooStep.h = 2;
-							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-							SDL_RenderFillRect(rendu, &bambooStep);
-							SDL_RenderPresent(rendu);
-						}
-					}
-					SDL_RenderPresent(rendu);
-					SDL_Rect Cut;
-					Cut.x = b * 200 + 73;
-					Cut.y = (a + 1) * 200 - 155;
-					Cut.w = 40;
-					Cut.h = 169;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cut);
-					SDL_RenderPresent(rendu);
-					Tab[a][b].taille = 5;
-					panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
-					SDL_Rect Cutpanda;
-					Cutpanda.x = b1 * 200 + 146;
-					Cutpanda.y = (a1 + 1) * 200 - 79;
-					Cutpanda.w = 73;
-					Cutpanda.h = 98;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cutpanda);
-					a1 = a;
-					b1 = b;
-					SDL_RenderPresent(rendu);
-					SDL_Delay(100);
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
-					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+		}
+		if (Reduce_Max(Tab, a, b) < 170 && TimePlay == true) {
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					Tab[i][j].taille += Tab[i][j].croissance;
 				}
 			}
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					SDL_Rect bamboo;
+					bamboo.x = j * 200 + 83;
+					bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+					bamboo.w = 10;
+					bamboo.h = Tab[i][j].taille;
+					SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+					SDL_RenderFillRect(rendu, &bamboo);
+
+					SDL_Rect bambooStep;
+					bambooStep.x = j * 200 + 80;
+					bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+					bambooStep.w = 16;
+					bambooStep.h = 2;
+					SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+					SDL_RenderFillRect(rendu, &bambooStep);
+					SDL_RenderPresent(rendu);
+				}
+			}
+			if (a == a1 || b == b1) {
+				SDL_Rect Cut;
+				Cut.x = b * 200 + 73;
+				Cut.y = (a + 1) * 200 - 155;
+				Cut.w = 40;
+				Cut.h = 169;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cut);
+				SDL_RenderPresent(rendu);
+				Tab[a][b].taille = 5;
+				panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
+				SDL_Rect Cutpanda;
+				Cutpanda.x = b1 * 200 + 146;
+				Cutpanda.y = (a1 + 1) * 200 - 79;
+				Cutpanda.w = 73;
+				Cutpanda.h = 98;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cutpanda);
+				a1 = a;
+				b1 = b;
+				SDL_RenderPresent(rendu);
+			}
+			else {
+				panda(rendu, b * 200 + 147, (a1 + 1) * 200 - 76);
+				SDL_Rect Cutpanda;
+				Cutpanda.x = b1 * 200 + 146;
+				Cutpanda.y = (a1 + 1) * 200 - 79;
+				Cutpanda.w = 73;
+				Cutpanda.h = 98;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cutpanda);
+				SDL_RenderPresent(rendu);
+				b1 = b;
+			}
+			Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
+			AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+			recharge--;
+			if (recharge == 0) {
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						Tab[i][j].taille += Tab[i][j].croissance;
+					}
+				}
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						SDL_Rect bamboo;
+						bamboo.x = j * 200 + 83;
+						bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+						bamboo.w = 10;
+						bamboo.h = Tab[i][j].taille;
+						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+						SDL_RenderFillRect(rendu, &bamboo);
+
+						SDL_Rect bambooStep;
+						bambooStep.x = j * 200 + 80;
+						bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+						bambooStep.w = 16;
+						bambooStep.h = 2;
+						SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+						SDL_RenderFillRect(rendu, &bambooStep);
+						SDL_RenderPresent(rendu);
+						recharge = 7;
+					}
+				}
+			}
+			AfficheRecharge(rendu, recharge);
 		}
 	}
 	SDL_DestroyRenderer(rendu);
@@ -449,6 +735,8 @@ int jeuMan() {
 	int TabMax[100] = { 0 };
 	int TabMin[100] = { 0 };
 	int positionx1 = 850;
+	int limCases = 3;
+	int recharge = 7;
 	int w = 0;
 	int c = 0;
 	int o = 0;
@@ -461,7 +749,7 @@ int jeuMan() {
 		return 1;
 	}
 
-	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
+	SDL_Window* win = SDL_CreateWindow("Mode manuel",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		LARGEUR,
@@ -484,6 +772,7 @@ int jeuMan() {
 	SDL_RenderPresent(rendu);
 	legendeMan(rendu, font);
 	GraphStats(rendu);
+	AfficheRecharge(rendu, recharge);
 
 	bool continuer = true;
 	SDL_Event event;
@@ -498,21 +787,25 @@ int jeuMan() {
 			continuer = false;
 			break;
 		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_LEFT && x > 145) {
+			if (event.key.keysym.sym == SDLK_LEFT && x > 145 && limCases != 0) {
 				Left(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
-			if (event.key.keysym.sym == SDLK_RIGHT && x < 660) {
+			if (event.key.keysym.sym == SDLK_RIGHT && x < 660 && limCases != 0) {
 				Right(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
-			if (event.key.keysym.sym == SDLK_UP && y > 180) {
+			if (event.key.keysym.sym == SDLK_UP && y > 180 && limCases != 0) {
 				Up(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
-			if (event.key.keysym.sym == SDLK_DOWN && y < 720) {
+			if (event.key.keysym.sym == SDLK_DOWN && y < 720 && limCases != 0) {
 				Down(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
 			if (event.key.keysym.sym == SDLK_RETURN) {
 				SDL_Rect Cut;
@@ -550,11 +843,43 @@ int jeuMan() {
 
 					}
 				}
+				limCases = 3;
+				recharge--;
+				if (recharge == 0) {
+					for (int i = 0; i < N; i++) {
+						for (int j = 0; j < N; j++) {
+							Tab[i][j].taille += Tab[i][j].croissance;
+						}
+					}
+					for (int i = 0; i < N; i++) {
+						for (int j = 0; j < N; j++) {
+							SDL_Rect bamboo;
+							bamboo.x = j * 200 + 83;
+							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+							bamboo.w = 10;
+							bamboo.h = Tab[i][j].taille;
+							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+							SDL_RenderFillRect(rendu, &bamboo);
+
+							SDL_Rect bambooStep;
+							bambooStep.x = j * 200 + 80;
+							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+							bambooStep.w = 16;
+							bambooStep.h = 2;
+							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+							SDL_RenderFillRect(rendu, &bambooStep);
+							SDL_RenderPresent(rendu);
+							recharge = 7;
+						}
+					}
+					SDL_Delay(1000);
+				}
 				if (w % 5 == 0) {
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
+				AfficheRecharge(rendu, recharge);
 			}
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
@@ -584,10 +909,11 @@ int jeuMan() {
 					}
 				}
 				if (w % 5 == 0) {
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
+				AfficheRecharge(rendu, recharge);
 			}
 		}
 	}
@@ -597,7 +923,7 @@ int jeuMan() {
 	std::cout << "Vous avez perdu !";
 	return 0;
 }
-void menu_principal(SDL_Renderer* rendu, TTF_Font* font,SDL_Rect &sound) {
+void menu_principal(SDL_Renderer* rendu, TTF_Font* font, TTF_Font* font2, SDL_Rect& sound) {
 
 	SDL_Surface* image = SDL_LoadBMP("fond.bmp");
 	SDL_Texture* background = SDL_CreateTextureFromSurface(rendu, image);
@@ -615,10 +941,35 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font,SDL_Rect &sound) {
 	titre_.x = (titre.x + titre.w / 2) - titre_.w / 2;
 	titre_.y = 40;
 
+	SDL_Rect config;
+	config.w = 200;
+	config.h = 50;
+	config.x = 40;
+	config.y = HAUTEUR_ - 80;
+
+	SDL_Rect import;
+	import.w = 250;
+	import.h = 50;
+	import.x = 80 + config.w;
+	import.y = HAUTEUR_ - 80;
+
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderDrawRect(rendu, &config);
+	SDL_RenderDrawRect(rendu, &import);
+	SDL_Texture* new_conf = loadText(rendu, "Créer Config", blanc, font2);
+	SDL_QueryTexture(new_conf, NULL, NULL, &config.w, &config.h);
+	SDL_RenderCopy(rendu, new_conf, NULL, &config);
+	SDL_DestroyTexture(new_conf);
+
+	SDL_Texture* load = loadText(rendu, "Importer Config", blanc, font2);
+	SDL_QueryTexture(load, NULL, NULL, &import.w, &import.h);
+	SDL_RenderCopy(rendu, load, NULL, &import);
+	SDL_DestroyTexture(load);
+
+
 	SDL_Texture* texture1 = loadText(rendu, "Panda Garden", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &titre_.w, &titre_.h);
 	SDL_RenderCopy(rendu, texture1, NULL, &titre_);
-	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture1);
 
 	SDL_Rect jeu_auto;
@@ -655,22 +1006,19 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font,SDL_Rect &sound) {
 	SDL_Texture* texture2 = loadText(rendu, "Auto", blanc, font);
 	SDL_QueryTexture(texture2, NULL, NULL, &jeu_auto_.w, &jeu_auto_.h);
 	SDL_RenderCopy(rendu, texture2, NULL, &jeu_auto_);
-	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture2);
 
 	SDL_Texture* texture3 = loadText(rendu, "Manuel", blanc, font);
 	SDL_QueryTexture(texture3, NULL, NULL, &jeu_manuel_.w, &jeu_manuel_.h);
 	SDL_RenderCopy(rendu, texture3, NULL, &jeu_manuel_);
-	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture3);
 
-	
+
 
 	sound.w = 128;
 	sound.h = 128;
 	sound.x = LARGEUR_ - 135;
 	sound.y = HAUTEUR_ - 128;
-	SDL_RenderFillRect(rendu, &sound);
 
 	SDL_Texture* audio = loadImage(rendu, "audio.png");
 	SDL_RenderCopy(rendu, audio, NULL, &sound);
@@ -711,12 +1059,12 @@ int main(int argn, char* argv[]) {
 		HAUTEUR_,
 		SDL_WINDOW_SHOWN
 	);
-	
+
 	if (win == NULL)
 		std::cout << "erreur ouverture fenetre";
 
 	SDL_Surface* icon = IMG_Load("icon.png");
-	SDL_SetWindowIcon(win,icon);
+	SDL_SetWindowIcon(win, icon);
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
 		win,
@@ -727,8 +1075,9 @@ int main(int argn, char* argv[]) {
 
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("Snes.ttf", 90);
+	TTF_Font* font2 = TTF_OpenFont("Snes.ttf", 40);
 	TTF_Quit();
-	menu_principal(rendu, font,sound);
+	menu_principal(rendu, font, font2, sound);
 	int success = SDL_QueueAudio(deviceId, wavBuffer, wavLength);
 	SDL_PauseAudioDevice(deviceId, 0);
 
@@ -747,18 +1096,17 @@ int main(int argn, char* argv[]) {
 
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT && in_menu) {
-				if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_-103) + 64  && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96)+64 ) {
+				if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
 					if (music) {
 						SDL_PauseAudioDevice(deviceId, 1);
 						SDL_Texture* audio3 = loadImage(rendu, "audio3.png");
 						SDL_RenderCopy(rendu, audio3, NULL, &sound);
 						SDL_RenderPresent(rendu);
-						SDL_Texture* audio = loadImage(rendu,"audio2.png");
+						SDL_Texture* audio = loadImage(rendu, "audio2.png");
 						SDL_RenderCopy(rendu, audio, NULL, &sound);
 						SDL_RenderPresent(rendu);
 						music = false;
 					}
-
 					else {
 						SDL_PauseAudioDevice(deviceId, 0);
 						SDL_Texture* audio3 = loadImage(rendu, "audio3.png");
@@ -769,18 +1117,22 @@ int main(int argn, char* argv[]) {
 						SDL_RenderPresent(rendu);
 						music = true;
 					}
-					
+
 
 				}
+				else if (event.button.x > 40 && event.button.x < 240 && event.button.y > HAUTEUR_ - 80 && event.button.y < HAUTEUR_ - 30) {
+					create_conf();
+				}
+				else if (event.button.x > 280 && event.button.x < 280 + 250 && event.button.y > HAUTEUR_ - 80 && event.button.y < HAUTEUR_ - 30) {
+					import_conf();
+				}
 				else if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
-					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
 					jeuAuto();
 				}
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
-					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
@@ -796,4 +1148,5 @@ int main(int argn, char* argv[]) {
 	SDL_Quit();
 	return 0;
 }
+
 
