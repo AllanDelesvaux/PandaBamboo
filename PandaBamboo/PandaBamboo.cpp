@@ -833,6 +833,12 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 }
 int main(int argn, char* argv[]) {
 
+	SDL_Rect sound;
+	sound.x = NULL;
+	sound.y = NULL;
+	sound.w = NULL;
+	sound.h = NULL;
+
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cout << "Echec à l’ouverture";
@@ -864,7 +870,7 @@ int main(int argn, char* argv[]) {
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 60);
 	TTF_Quit();
-	menu_principal(rendu, font);
+	menu_principal(rendu, font, sound);
 	SDL_RenderPresent(rendu);
 
 	bool continuer = true;
@@ -889,17 +895,23 @@ int main(int argn, char* argv[]) {
 					SDL_DestroyWindow(win);
 					jeuAuto();
 				}
-				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
+				if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
 					jeuMan();
 				}
+				if (event.button.button == SDL_BUTTON_LEFT && in_menu) {
+					if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
+						SDL_Texture* audio = loadImage(rendu, "audio2.png");
+						SDL_RenderCopy(rendu, audio, NULL, &sound);
+						SDL_RenderPresent(rendu);
+					}
+				}
 			}
 		}
 	}
-
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
