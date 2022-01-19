@@ -1011,9 +1011,8 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font, TTF_Font* font2, SDL_Re
 	SDL_Texture* texture3 = loadText(rendu, "Manuel", blanc, font);
 	SDL_QueryTexture(texture3, NULL, NULL, &jeu_manuel_.w, &jeu_manuel_.h);
 	SDL_RenderCopy(rendu, texture3, NULL, &jeu_manuel_);
+	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture3);
-
-
 
 	sound.w = 128;
 	sound.h = 128;
@@ -1059,7 +1058,7 @@ int main(int argn, char* argv[]) {
 		HAUTEUR_,
 		SDL_WINDOW_SHOWN
 	);
-
+	
 	if (win == NULL)
 		std::cout << "erreur ouverture fenetre";
 
