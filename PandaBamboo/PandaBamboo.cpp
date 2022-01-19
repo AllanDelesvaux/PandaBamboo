@@ -8,7 +8,7 @@ const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
 SDL_Color blanc = { 255, 255, 255 };
 SDL_Color rouge = { 255, 0, 0 };
-SDL_Color vert = { 0, 255, 0};
+SDL_Color vert = { 0, 255, 0 };
 SDL_Color bleu = { 0, 0, 255 };
 
 const int LARGEUR = 1200;
@@ -345,7 +345,7 @@ void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[],
 
 		a = 856 + (i - c) * 3;
 		SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
-		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[(i) % 100]/10, a + 3, 290 + TabMoy[(i + 1) % 100]/10);
+		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[(i) % 100] / 10, a + 3, 290 + TabMoy[(i + 1) % 100] / 10);
 		SDL_RenderPresent(rendu);
 
 		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
@@ -367,14 +367,14 @@ void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, in
 		c++;
 	}
 	TabMoy[o] = Moyenne(Tab);
-	TabMin[o] = Min(Tab,a,b);
+	TabMin[o] = Min(Tab, a, b);
 	TabMax[o] = Reduce_Max(Tab, e, h);
 	o++;
 }
 void AfficheRecharge(SDL_Renderer* rendu, int taille) {
 	for (int i = 0; i < 7; i++) {
 		SDL_Rect rg;
-		rg.x = 845+40*i;
+		rg.x = 845 + 40 * i;
 		rg.y = 770;
 		rg.w = 40;
 		rg.h = 40;
@@ -441,7 +441,7 @@ int jeuAuto() {
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 30);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
 	interface_auto(rendu);
 	legendeAuto(rendu, font);
@@ -606,7 +606,7 @@ int jeuMan() {
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 30);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
 	interface_auto(rendu);
 	panda(rendu, x, y);
@@ -710,13 +710,13 @@ int jeuMan() {
 							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
 							SDL_RenderFillRect(rendu, &bambooStep);
 							SDL_RenderPresent(rendu);
-							recharge=7;
+							recharge = 7;
 						}
 					}
 					SDL_Delay(1000);
 				}
 				if (w % 5 == 0) {
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c,a,b);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
@@ -750,7 +750,7 @@ int jeuMan() {
 					}
 				}
 				if (w % 5 == 0) {
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c,a,b);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
@@ -764,8 +764,12 @@ int jeuMan() {
 	std::cout << "Vous avez perdu !";
 	return 0;
 }
-void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
+void menu_principal(SDL_Renderer* rendu, TTF_Font* font, SDL_Rect& sound) {
 
+	SDL_Surface* image = SDL_LoadBMP("fond.bmp");
+	SDL_Texture* background = SDL_CreateTextureFromSurface(rendu, image);
+	SDL_RenderCopy(rendu, background, NULL, NULL);
+	SDL_RenderPresent(rendu);
 	SDL_Rect titre;
 	titre.x = 80;
 	titre.y = 40;
@@ -777,9 +781,6 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 	titre_.h = titre.h;
 	titre_.x = (titre.x + titre.w / 2) - titre_.w / 2;
 	titre_.y = 40;
-
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-	SDL_RenderDrawRect(rendu, &titre_);
 
 	SDL_Texture* texture1 = loadText(rendu, "Panda Garden", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &titre_.w, &titre_.h);
@@ -829,6 +830,20 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_RenderCopy(rendu, texture3, NULL, &jeu_manuel_);
 	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture3);
+
+
+
+	sound.w = 128;
+	sound.h = 128;
+	sound.x = LARGEUR_ - 135;
+	sound.y = HAUTEUR_ - 128;
+	SDL_RenderFillRect(rendu, &sound);
+
+	SDL_Texture* audio = loadImage(rendu, "audio.png");
+	SDL_RenderCopy(rendu, audio, NULL, &sound);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(audio);
+
 
 }
 int main(int argn, char* argv[]) {
