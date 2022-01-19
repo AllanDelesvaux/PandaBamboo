@@ -597,7 +597,7 @@ int jeuMan() {
 	std::cout << "Vous avez perdu !";
 	return 0;
 }
-void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
+void menu_principal(SDL_Renderer* rendu, TTF_Font* font,SDL_Rect &sound) {
 
 	SDL_Surface* image = SDL_LoadBMP("fond.bmp");
 	SDL_Texture* background = SDL_CreateTextureFromSurface(rendu, image);
@@ -614,9 +614,6 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 	titre_.h = titre.h;
 	titre_.x = (titre.x + titre.w / 2) - titre_.w / 2;
 	titre_.y = 40;
-
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-	SDL_RenderDrawRect(rendu, &titre_);
 
 	SDL_Texture* texture1 = loadText(rendu, "Panda Garden", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &titre_.w, &titre_.h);
@@ -667,8 +664,26 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture3);
 
+	sound.w = 128;
+	sound.h = 128;
+	sound.x = LARGEUR_ - 135;
+	sound.y = HAUTEUR_ - 128;
+
+
+	SDL_Texture* audio = loadImage(rendu, "audio.png");
+	SDL_RenderCopy(rendu, audio, NULL, &sound);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(audio);
+
+
 }
 int main(int argn, char* argv[]) {
+
+	SDL_Rect sound;
+	sound.x = NULL;
+	sound.y = NULL;
+	sound.w = NULL;
+	sound.h = NULL;
 
 	bool in_menu = true;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -692,6 +707,8 @@ int main(int argn, char* argv[]) {
 	if (win == NULL)
 		std::cout << "erreur ouverture fenetre";
 
+	SDL_Surface* icon = IMG_Load("icon.png");
+	SDL_SetWindowIcon(win,icon);
 
 	SDL_Renderer* rendu = SDL_CreateRenderer(
 		win,
@@ -699,9 +716,9 @@ int main(int argn, char* argv[]) {
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("Snes.ttf", 60);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 90);
 	TTF_Quit();
-	menu_principal(rendu, font);
+	menu_principal(rendu, font,sound);
 	SDL_RenderPresent(rendu);
 
 	bool continuer = true;
@@ -713,13 +730,19 @@ int main(int argn, char* argv[]) {
 		switch (event.type)
 		{
 		case SDL_QUIT:
-
 			continuer = false;
 			break;
 
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT && in_menu) {
-				if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
+				if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_-103) + 64  && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96)+64) {
+					SDL_Texture* audio = loadImage(rendu, "audio2.png");
+					SDL_RenderCopy(rendu, audio, NULL, &sound);
+					SDL_RenderPresent(rendu);
+
+
+				}
+				else if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
