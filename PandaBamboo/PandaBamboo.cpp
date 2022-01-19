@@ -222,6 +222,15 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 	SDL_RenderDrawRect(rendu, &MoyenneLeg);
 
+
+	SDL_Rect quit;
+	quit.x = 845;
+	quit.y = 130;
+	quit.w = 320;
+	quit.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &quit);
+
 	SDL_Rect MaxLeg;
 	MaxLeg.x = 845;
 	MaxLeg.y = 670;
@@ -242,6 +251,11 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_QueryTexture(texture3, NULL, NULL, &MoyenneLeg.w, &MoyenneLeg.h);
 	SDL_RenderCopy(rendu, texture3, NULL, &MoyenneLeg);
 	SDL_DestroyTexture(texture3);
+
+	SDL_Texture* texture8 = loadText(rendu, "Exit = Escape", blanc, font);
+	SDL_QueryTexture(texture8, NULL, NULL, &quit.w, &quit.h);
+	SDL_RenderCopy(rendu, texture8, NULL, &quit);
+	SDL_DestroyTexture(texture8);
 
 	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
 	SDL_QueryTexture(texture4, NULL, NULL, &MaxLeg.w, &MaxLeg.h);
@@ -979,6 +993,14 @@ int jeuMan(bool& menu) {
 			printf("Vous avez quitté le mode manuel\n----> Retour au Menu !\n");
 			return -1;
 		case SDL_KEYDOWN:
+			if (recharge == 0) {
+				SDL_DestroyRenderer(manrend);
+				SDL_DestroyWindow(manwin);
+				menu = true;
+				continuer = false;
+				printf("Vous avez perdu le mode manuel car vous n'aviez plus d'énergie\n----> Retour au Menu !\n");
+				return -1;
+			}
 			if (event.key.keysym.sym == SDLK_ESCAPE) {
 				SDL_DestroyRenderer(manrend);
 				SDL_DestroyWindow(manwin);
@@ -1092,6 +1114,10 @@ int jeuMan(bool& menu) {
 					AfficheStats(manrend, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
+				AfficheRecharge(manrend, recharge);
+			}
+			if (event.key.keysym.sym == SDLK_y && x == 145 && y == 720) {
+				recharge = 7;
 				AfficheRecharge(manrend, recharge);
 			}
 		}
