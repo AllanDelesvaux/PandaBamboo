@@ -453,7 +453,7 @@ int jeuAuto() {
 	SDL_Delay(1000);
 	while (continuer)
 	{
-		SDL_WaitEventTimeout(&event, 400);
+		SDL_WaitEventTimeout(&event, 800);
 		switch (event.type)
 		{
 		case SDL_QUIT:
