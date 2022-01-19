@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer>
+#include <stdio.h>
 #include "config_sdl.h"
 #include <ctime>
 using namespace std;
@@ -667,7 +669,7 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 int main(int argn, char* argv[]) {
 
 	bool in_menu = true;
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO |  SDL_INIT_AUDIO) != 0) {
 		std::cout << "Echec � l�ouverture";
 		return 1;
 	}
@@ -684,6 +686,12 @@ int main(int argn, char* argv[]) {
 		HAUTEUR_,
 		SDL_WINDOW_SHOWN
 	);
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+		std::cout << "Error : " << Mix_GetError() << std::endl;
+
+	Mix_Music* bgm = Mix_LoadMUS("panda_type_beat.wav");
+	Mix_Chunk* soundEffect = Mix_LoadWav("panda_type_beat.wav");
 
 	if (win == NULL)
 		std::cout << "erreur ouverture fenetre";
@@ -706,6 +714,22 @@ int main(int argn, char* argv[]) {
 	while (continuer)
 	{
 		SDL_WaitEvent(&event);
+		if (ev.type == SDL_KEYDOWN)
+		{
+			switch (ev.key.keysm.sym)
+			{
+			case SDLK_p:
+				if (Mix_PlayingMusic())
+					Mix_PlayMusic(bgm, -1);
+				else if (Mix_PausedMusic())
+					Mix_ResumeMusic();
+				else(Mix_PauseMusic);
+				break;
+			case SDLK_s:
+				Mix_HaltMusic();
+				break;
+			}
+		}
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -735,6 +759,13 @@ int main(int argn, char* argv[]) {
 
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
+	Mix_FreeChunk(soundEffect);
+	Mix_FreeMusic(bgm);
+
+	bgm = nullptr;
+	soundEffect = nullptr;
+	
+	Mix_Quit();  
 	SDL_Quit();
 	return 0;
 }
