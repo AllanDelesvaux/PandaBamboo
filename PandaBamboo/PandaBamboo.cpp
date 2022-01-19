@@ -14,7 +14,7 @@ const int HAUTEUR = 900;
 const int N = 4;
 
 
-void out(Bamboo tab[N][N]) {
+/*void out(Bamboo tab[N][N]) {
 	int a, b, nbr = 1;
 	ofstream sortie("config.txt", ios::out);
 	for (int i = 0; i < N; i++) {
@@ -28,6 +28,7 @@ void out(Bamboo tab[N][N]) {
 	cout << "Fichier écrit";
 	sortie.close();
 }
+*/
 
 void read(const char file[] = "config.txt") {
 
