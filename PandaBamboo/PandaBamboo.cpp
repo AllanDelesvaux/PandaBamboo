@@ -411,7 +411,7 @@ int jeuAuto() {
 	int TabMax[100] = { 0 };
 	int TabMin[100] = { 0 };
 	int positionx1 = 850;
-	int recharge=7;
+	int recharge = 7;
 	int c = 0;
 	int o = 0;
 	int a = 0;
@@ -449,10 +449,11 @@ int jeuAuto() {
 	AfficheRecharge(rendu, recharge);
 	bool continuer = true;
 	SDL_Event event;
+	bool TimePlay = true;
 	SDL_Delay(1000);
 	while (continuer)
 	{
-		SDL_WaitEventTimeout(&event, 1000);
+		SDL_WaitEventTimeout(&event, 400);
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -461,106 +462,105 @@ int jeuAuto() {
 			break;
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_t) {
-				while (Reduce_Max(Tab, a, b) < 170) {
-					for (int i = 0; i < N; i++) {
-						for (int j = 0; j < N; j++) {
-							Tab[i][j].taille += Tab[i][j].croissance;
-						}
-					}
-					for (int i = 0; i < N; i++) {
-						for (int j = 0; j < N; j++) {
-							SDL_Rect bamboo;
-							bamboo.x = j * 200 + 83;
-							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-							bamboo.w = 10;
-							bamboo.h = Tab[i][j].taille;
-							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-							SDL_RenderFillRect(rendu, &bamboo);
-
-							SDL_Rect bambooStep;
-							bambooStep.x = j * 200 + 80;
-							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-							bambooStep.w = 16;
-							bambooStep.h = 2;
-							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-							SDL_RenderFillRect(rendu, &bambooStep);
-							SDL_RenderPresent(rendu);
-						}
-					}
-					if(a!=a1 && b!=b1){
-						panda(rendu, b * 200 + 147, (a1 + 1) * 200 - 76);
-						SDL_Rect Cutpanda;
-						Cutpanda.x = b1 * 200 + 146;
-						Cutpanda.y = (a1 + 1) * 200 - 79;
-						Cutpanda.w = 73;
-						Cutpanda.h = 98;
-						SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-						SDL_RenderFillRect(rendu, &Cutpanda);
-						SDL_RenderPresent(rendu);
-						b1 = b;
-					}else{
-						SDL_Rect Cut;
-						Cut.x = b * 200 + 73;
-						Cut.y = (a + 1) * 200 - 155;
-						Cut.w = 40;
-						Cut.h = 169;
-						SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-						SDL_RenderFillRect(rendu, &Cut);
-						SDL_RenderPresent(rendu);
-						Tab[a][b].taille = 5;
-
-						panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
-						SDL_Rect Cutpanda;
-						Cutpanda.x = b1 * 200 + 146;
-						Cutpanda.y = (a1 + 1) * 200 - 79;
-						Cutpanda.w = 73;
-						Cutpanda.h = 98;
-						SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-						SDL_RenderFillRect(rendu, &Cutpanda);
-						a1 = a;
-						b1 = b;
-						SDL_RenderPresent(rendu);
-					}
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
-					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
-					recharge--;
-					if (recharge == 0) {
-						for (int i = 0; i < N; i++) {
-							for (int j = 0; j < N; j++) {
-								Tab[i][j].taille += Tab[i][j].croissance;
-							}
-						}
-						for (int i = 0; i < N; i++) {
-							for (int j = 0; j < N; j++) {
-								SDL_Rect bamboo;
-								bamboo.x = j * 200 + 83;
-								bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-								bamboo.w = 10;
-								bamboo.h = Tab[i][j].taille;
-								SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-								SDL_RenderFillRect(rendu, &bamboo);
-
-								SDL_Rect bambooStep;
-								bambooStep.x = j * 200 + 80;
-								bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
-								bambooStep.w = 16;
-								bambooStep.h = 2;
-								SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-								SDL_RenderFillRect(rendu, &bambooStep);
-								SDL_RenderPresent(rendu);
-								recharge = 7;
-							}
-						}
-						SDL_Delay(1000);
-					}
-					AfficheRecharge(rendu, recharge);
-				}
-				SDL_DestroyRenderer(rendu);
-				SDL_DestroyWindow(win);
-				SDL_Quit();
-				std::cout << "perdu";
-				return 0;
+				TimePlay = false;
 			}
+			if (event.key.keysym.sym == SDLK_r) {
+				TimePlay = true;
+			}
+
+		}
+		if (Reduce_Max(Tab, a, b) < 170 && TimePlay == true) {
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					Tab[i][j].taille += Tab[i][j].croissance;
+				}
+			}
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					SDL_Rect bamboo;
+					bamboo.x = j * 200 + 83;
+					bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+					bamboo.w = 10;
+					bamboo.h = Tab[i][j].taille;
+					SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+					SDL_RenderFillRect(rendu, &bamboo);
+
+					SDL_Rect bambooStep;
+					bambooStep.x = j * 200 + 80;
+					bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+					bambooStep.w = 16;
+					bambooStep.h = 2;
+					SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+					SDL_RenderFillRect(rendu, &bambooStep);
+					SDL_RenderPresent(rendu);
+				}
+			}
+			if (a == a1 || b == b1) {
+				SDL_Rect Cut;
+				Cut.x = b * 200 + 73;
+				Cut.y = (a + 1) * 200 - 155;
+				Cut.w = 40;
+				Cut.h = 169;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cut);
+				SDL_RenderPresent(rendu);
+				Tab[a][b].taille = 5;
+				panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
+				SDL_Rect Cutpanda;
+				Cutpanda.x = b1 * 200 + 146;
+				Cutpanda.y = (a1 + 1) * 200 - 79;
+				Cutpanda.w = 73;
+				Cutpanda.h = 98;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cutpanda);
+				a1 = a;
+				b1 = b;
+				SDL_RenderPresent(rendu);
+			}
+			else {
+				panda(rendu, b * 200 + 147, (a1 + 1) * 200 - 76);
+				SDL_Rect Cutpanda;
+				Cutpanda.x = b1 * 200 + 146;
+				Cutpanda.y = (a1 + 1) * 200 - 79;
+				Cutpanda.w = 73;
+				Cutpanda.h = 98;
+				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+				SDL_RenderFillRect(rendu, &Cutpanda);
+				SDL_RenderPresent(rendu);
+				b1 = b;
+			}
+			Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
+			AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+			recharge--;
+			if (recharge == 0) {
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						Tab[i][j].taille += Tab[i][j].croissance;
+					}
+				}
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						SDL_Rect bamboo;
+						bamboo.x = j * 200 + 83;
+						bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+						bamboo.w = 10;
+						bamboo.h = Tab[i][j].taille;
+						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+						SDL_RenderFillRect(rendu, &bamboo);
+
+						SDL_Rect bambooStep;
+						bambooStep.x = j * 200 + 80;
+						bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+						bambooStep.w = 16;
+						bambooStep.h = 2;
+						SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+						SDL_RenderFillRect(rendu, &bambooStep);
+						SDL_RenderPresent(rendu);
+						recharge = 7;
+					}
+				}
+			}
+			AfficheRecharge(rendu, recharge);
 		}
 	}
 	SDL_DestroyRenderer(rendu);
