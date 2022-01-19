@@ -258,33 +258,6 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 }
 void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 
-	SDL_Rect spaceUtility;
-	spaceUtility.x = 20;
-	spaceUtility.y = 840;
-	spaceUtility.w = 390;
-	spaceUtility.h = 40;
-
-	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
-	SDL_RenderDrawRect(rendu, &spaceUtility);
-
-	SDL_Rect ReturnUtility;
-	ReturnUtility.x = 430;
-	ReturnUtility.y = 840;
-	ReturnUtility.w = 390;
-	ReturnUtility.h = 40;
-
-	SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
-	SDL_RenderDrawRect(rendu, &ReturnUtility);
-
-	SDL_Texture* texture1 = loadText(rendu, "Space = 1 Day ", blanc, font);
-	SDL_QueryTexture(texture1, NULL, NULL, &spaceUtility.w, &spaceUtility.h);
-	SDL_RenderCopy(rendu, texture1, NULL, &spaceUtility);
-	SDL_DestroyTexture(texture1);
-
-	SDL_Texture* texture2 = loadText(rendu, "Return = Cut", blanc, font);
-	SDL_QueryTexture(texture2, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
-	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
-	SDL_DestroyTexture(texture2);
 
 	SDL_Rect MoyenneLeg;
 	MoyenneLeg.x = 845;
@@ -327,7 +300,7 @@ void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 
 	SDL_Rect play;
 	play.x = 845;
-	play.y = 60;
+	play.y = 30;
 	play.w = 320;
 	play.h = 40;
 	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
@@ -335,11 +308,35 @@ void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 
 	SDL_Rect pause;
 	pause.x = 845;
-	pause.y = 110;
+	pause.y = 80;
 	pause.w = 320;
 	pause.h = 40;
 	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
 	SDL_RenderDrawRect(rendu, &pause);
+
+	SDL_Rect quit;
+	quit.x = 845;
+	quit.y = 130;
+	quit.w = 320;
+	quit.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &quit);
+
+	SDL_Rect max;
+	max.x = 845;
+	max.y = 180;
+	max.w = 320;
+	max.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &max);
+
+	SDL_Rect fast;
+	fast.x = 845;
+	fast.y = 230;
+	fast.w = 320;
+	fast.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &fast);
 
 	SDL_Texture* texture6 = loadText(rendu, "PLAY = r", blanc, font);
 	SDL_QueryTexture(texture6, NULL, NULL, &play.w, &play.h);
@@ -350,6 +347,23 @@ void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_QueryTexture(texture7, NULL, NULL, &pause.w, &pause.h);
 	SDL_RenderCopy(rendu, texture7, NULL, &pause);
 	SDL_DestroyTexture(texture7);
+
+	SDL_Texture* texture8 = loadText(rendu, "Exit = Escape", blanc, font);
+	SDL_QueryTexture(texture8, NULL, NULL, &quit.w, &quit.h);
+	SDL_RenderCopy(rendu, texture8, NULL, &quit);
+	SDL_DestroyTexture(texture8);
+
+	SDL_Texture* texture9= loadText(rendu, "Reduce Max = M", blanc, font);
+	SDL_QueryTexture(texture9, NULL, NULL, &max.w, &max.h);
+	SDL_RenderCopy(rendu, texture9, NULL, &max);
+	SDL_DestroyTexture(texture9);
+
+	SDL_Texture* texture10 = loadText(rendu, "Reduce Fastest = P", blanc, font);
+	SDL_QueryTexture(texture10, NULL, NULL, &fast.w, &fast.h);
+	SDL_RenderCopy(rendu, texture10, NULL, &fast);
+	SDL_DestroyTexture(texture10);
+
+
 
 	SDL_RenderPresent(rendu);
 
@@ -656,6 +670,7 @@ int jeuAuto(bool& menu) {
 			}
 			if (event.key.keysym.sym == SDLK_r) {
 				TimePlay = true;
+			
 			}
 			if (event.key.keysym.sym == SDLK_ESCAPE) {
 				SDL_DestroyRenderer(autorend);
@@ -666,17 +681,41 @@ int jeuAuto(bool& menu) {
 				return-1;
 			}
 			if (event.key.keysym.sym == SDLK_p) {
-				Mode = false; //fastest
+				Mode = false;
 				printf("\nMode Fastest actif ! \n");
+				SDL_Rect active; //fastest
+				active.w = 20;
+				active.h = 20;
+				active.x = 845+ 330;
+				active.y = 180;
+				SDL_SetRenderDrawColor(autorend, 0, 0, 0, 255);
+				SDL_RenderFillRect(autorend, &active);
+				SDL_RenderPresent(autorend);
+				active.y = 230;
+				SDL_SetRenderDrawColor(autorend, 0, 255, 0, 255);
+				SDL_RenderFillRect(autorend, &active);
+				SDL_RenderPresent(autorend);
 			}
 			if (event.key.keysym.sym == SDLK_m) {
 				Mode = true; //autre
-				printf("\nMode Maxest actif ! \n");
+				printf("\nMode Max  actif ! \n");
+				SDL_Rect active; 
+				active.w = 20;
+				active.h = 20;
+				active.x = 845 + 330;
+				active.y = 230;
+				SDL_SetRenderDrawColor(autorend, 0, 0, 0, 255);
+				SDL_RenderFillRect(autorend, &active);
+				SDL_RenderPresent(autorend);
+				active.y = 180;
+				SDL_SetRenderDrawColor(autorend, 0, 255, 0, 255);
+				SDL_RenderFillRect(autorend, &active);
+				SDL_RenderPresent(autorend);
 			}
 		}
-		if(Mode = false){
+		if(Mode == false){
 			Reduce_Fastest(Tab, a, b);
-			if (Tab[a][b].taille > 170) {
+			if (Tab[a][b].taille < 170) {
 				if (TimePlay == true) {
 					SDL_Delay(200);
 					for (int i = 0; i < N; i++) {
