@@ -15,6 +15,11 @@ const int LARGEUR = 1200;
 const int HAUTEUR = 900;
 const int N = 4;
 
+void in(SDL_Renderer* co) {
+
+
+}
+
 void interface_auto(SDL_Renderer* rendu) {
 
 	for (int i = 20; i < 820; i += 200) {
@@ -429,6 +434,162 @@ void AfficheRecharge(SDL_Renderer* rendu, int taille) {
 			SDL_RenderFillRect(rendu, &rt);
 		}
 	}
+}
+int create_conf() {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		std::cout << "Echec à l’ouverture";
+		return 1;
+	}
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 25);
+	SDL_Window* configuration = SDL_CreateWindow("Creer une configuration",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR / 4,
+		HAUTEUR / 4,
+		SDL_WINDOW_SHOWN
+	);
+	SDL_Renderer* co = SDL_CreateRenderer(
+		configuration,
+		-1,
+		SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawBlendMode(co, SDL_BLENDMODE_BLEND);
+	// premiere entrée
+	SDL_Rect label_conf;
+	label_conf.x = 20;
+	label_conf.y = 30;
+	label_conf.w = 70;
+	label_conf.h = 30;
+	SDL_Texture* label = loadText(co, "Nom Config:", blanc, font);
+	SDL_QueryTexture(label, NULL, NULL, &label_conf.w, &label_conf.h);
+	SDL_RenderCopy(co, label, NULL, &label_conf);
+	SDL_DestroyTexture(label);
+
+	SDL_Rect nom_conf;
+	nom_conf.x = 135;
+	nom_conf.y = 30;
+	nom_conf.w = 140;
+	nom_conf.h = 30;
+
+	// deuxième entrée
+	SDL_Rect label_conf2;
+	label_conf2.x = 20;
+	label_conf2.y = 80;
+	label_conf2.w = 70;
+	label_conf2.h = 30;
+	SDL_Texture* label2 = loadText(co, "Nombre Bambous:", blanc, font);
+	SDL_QueryTexture(label2, NULL, NULL, &label_conf2.w, &label_conf2.h);
+	SDL_RenderCopy(co, label2, NULL, &label_conf2);
+	SDL_DestroyTexture(label2);
+
+	SDL_Rect nom_conf2;
+	nom_conf2.x = 190;
+	nom_conf2.y = 80;
+	nom_conf2.w = 40;
+	nom_conf2.h = 30;
+
+	SDL_Rect end;
+	end.x = 120;
+	end.y = 140;
+	end.w = 40;
+	end.h = 30;
+	SDL_Texture* label3 = loadText(co, "Create !", blanc, font);
+	SDL_QueryTexture(label3, NULL, NULL, &end.w, &end.h);
+	SDL_RenderCopy(co, label3, NULL, &end);
+	SDL_DestroyTexture(label3);
+
+	// Couleur et Render
+	SDL_SetRenderDrawColor(co, 255, 255, 255, 255);
+	SDL_RenderDrawRect(co, &nom_conf);
+	SDL_RenderDrawRect(co, &label_conf);
+	SDL_RenderDrawRect(co, &nom_conf2);
+	SDL_RenderDrawRect(co, &label_conf2);
+	SDL_RenderDrawRect(co, &end);
+	SDL_RenderPresent(co);
+	SDL_Delay(5000);
+	SDL_DestroyWindow(configuration);
+
+}
+int import_conf() {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		std::cout << "Echec à l’ouverture";
+		return 1;
+	}
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 25);
+	SDL_Window* configuration = SDL_CreateWindow("Importer une config",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR / 4,
+		HAUTEUR / 6,
+		SDL_WINDOW_SHOWN
+	);
+	SDL_Renderer* co = SDL_CreateRenderer(
+		configuration,
+		-1,
+		SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawBlendMode(co, SDL_BLENDMODE_BLEND);
+	// premiere entrée
+	SDL_Rect label_conf;
+	label_conf.x = 20;
+	label_conf.y = 30;
+	label_conf.w = 70;
+	label_conf.h = 30;
+	SDL_Texture* label = loadText(co, "Nom Config:", blanc, font);
+	SDL_QueryTexture(label, NULL, NULL, &label_conf.w, &label_conf.h);
+	SDL_RenderCopy(co, label, NULL, &label_conf);
+	SDL_DestroyTexture(label);
+
+	SDL_Rect nom_conf;
+	nom_conf.x = 135;
+	nom_conf.y = 30;
+	nom_conf.w = 140;
+	nom_conf.h = 30;
+
+	SDL_Rect end;
+	end.x = 120;
+	end.y = 90;
+	end.w = 40;
+	end.h = 30;
+	SDL_Texture* label3 = loadText(co, "Import !", blanc, font);
+	SDL_QueryTexture(label3, NULL, NULL, &end.w, &end.h);
+	SDL_RenderCopy(co, label3, NULL, &end);
+	SDL_DestroyTexture(label3);
+
+
+
+
+	// Couleur et Render
+	SDL_SetRenderDrawColor(co, 255, 255, 255, 255);
+	SDL_RenderDrawRect(co, &nom_conf);
+	SDL_RenderDrawRect(co, &label_conf);
+	SDL_RenderDrawRect(co, &end);
+	SDL_RenderPresent(co);
+	bool continuer = true;
+	SDL_Event event;
+	SDL_Event textinput;
+	// Gestion des évenements
+	while (continuer)
+	{
+		SDL_WaitEvent(&event);
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			SDL_DestroyRenderer(co);
+			SDL_DestroyWindow(configuration);
+			continuer = false;
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
+			}
+
+
+		}
+	}
+
+
+
+	SDL_DestroyRenderer(co);
+	SDL_DestroyWindow(configuration);
 }
 int jeuAuto() {
 	Bamboo Tab[N][N];
@@ -878,7 +1039,7 @@ int jeuMan() {
 	std::cout << "Vous avez perdu !";
 	return 0;
 }
-void menu_principal(SDL_Renderer* rendu, TTF_Font* font, SDL_Rect& sound) {
+void menu_principal(SDL_Renderer* rendu, TTF_Font* font,TTF_Font* font2, SDL_Rect& sound) {
 
 	SDL_Surface* image = SDL_LoadBMP("fond.bmp");
 	SDL_Texture* background = SDL_CreateTextureFromSurface(rendu, image);
@@ -895,6 +1056,33 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font, SDL_Rect& sound) {
 	titre_.h = titre.h;
 	titre_.x = (titre.x + titre.w / 2) - titre_.w / 2;
 	titre_.y = 40;
+
+	SDL_Rect config;
+	config.w = 200;
+	config.h = 50;
+	config.x = 40;
+	config.y = HAUTEUR_ - 80;
+
+	SDL_Rect import;
+	import.w = 250;
+	import.h = 50;
+	import.x = 80 + config.w;
+	import.y = HAUTEUR_ - 80;
+
+
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderDrawRect(rendu, &config);
+	SDL_RenderDrawRect(rendu, &import);
+	SDL_Texture* new_conf = loadText(rendu, "Créer Config", blanc, font2);
+	SDL_QueryTexture(new_conf, NULL, NULL, &config.w, &config.h);
+	SDL_RenderCopy(rendu, new_conf, NULL, &config);
+	SDL_DestroyTexture(new_conf);
+
+	SDL_Texture* load = loadText(rendu, "Importer Config", blanc, font2);
+	SDL_QueryTexture(load, NULL, NULL, &import.w, &import.h);
+	SDL_RenderCopy(rendu, load, NULL, &import);
+	SDL_DestroyTexture(load);
+
 
 	SDL_Texture* texture1 = loadText(rendu, "Panda Garden", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &titre_.w, &titre_.h);
@@ -951,7 +1139,6 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font, SDL_Rect& sound) {
 	sound.h = 128;
 	sound.x = LARGEUR_ - 135;
 	sound.y = HAUTEUR_ - 128;
-	SDL_RenderFillRect(rendu, &sound);
 
 	SDL_Texture* audio = loadImage(rendu, "audio.png");
 	SDL_RenderCopy(rendu, audio, NULL, &sound);
@@ -1008,8 +1195,9 @@ int main(int argn, char* argv[]) {
 
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("Snes.ttf", 90);
+	TTF_Font* font2 = TTF_OpenFont("Snes.ttf", 40);
 	TTF_Quit();
-	menu_principal(rendu, font, sound);
+	menu_principal(rendu, font,font2, sound);
 	int success = SDL_QueueAudio(deviceId, wavBuffer, wavLength);
 	SDL_PauseAudioDevice(deviceId, 0);
 
@@ -1052,15 +1240,19 @@ int main(int argn, char* argv[]) {
 
 
 				}
+				else if (event.button.x > 40 && event.button.x < 240 && event.button.y > HAUTEUR_ - 80 && event.button.y < HAUTEUR_ - 30) {
+					create_conf();
+				}
+				else if (event.button.x > 280 && event.button.x < 280 + 250 && event.button.y > HAUTEUR_ - 80 && event.button.y < HAUTEUR_ - 30) {
+					import_conf();
+				}
 				else if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
-					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
 					jeuAuto();
 				}
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
-					std::cout << "ça marche\n";
 					in_menu = false;
 					SDL_DestroyRenderer(rendu);
 					SDL_DestroyWindow(win);
