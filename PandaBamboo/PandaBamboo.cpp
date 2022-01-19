@@ -15,11 +15,6 @@ const int LARGEUR = 1200;
 const int HAUTEUR = 900;
 const int N = 4;
 
-void in(SDL_Renderer* co) {
-
-
-}
-
 void interface_auto(SDL_Renderer* rendu,bool pourman) {
 
 	for (int i = 20; i < 820; i += 200) {
@@ -69,7 +64,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 	srand(time(NULL));
 	for (int i = 0; i < taille; i++) {
 		for (int j = 0; j < taille; j++) {
-			tab[i][j].croissance = rand() % 5 + 5;
+			tab[i][j].croissance = rand() % 3 + 5;
 			tab[i][j].taille = 5;
 		}
 	}
@@ -283,6 +278,18 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	MinLeg.w = 320;
 	MinLeg.h = 40;
 	SDL_RenderDrawRect(rendu, &MinLeg);
+
+	SDL_Rect LimCases;
+	LimCases.x = 845;
+	LimCases.y = 40;
+	LimCases.w = 320;
+	LimCases.h = 40;
+	SDL_RenderDrawRect(rendu, &LimCases);
+
+	SDL_Texture* texture12 = loadText(rendu, "Limite de cases par jour = 3", blanc, font);
+	SDL_QueryTexture(texture12, NULL, NULL, &LimCases.w, &LimCases.h);
+	SDL_RenderCopy(rendu, texture12, NULL, &LimCases);
+	SDL_DestroyTexture(texture12);
 
 	SDL_Texture* texture3 = loadText(rendu, "Moyenne", rouge, font);
 	SDL_QueryTexture(texture3, NULL, NULL, &MoyenneLeg.w, &MoyenneLeg.h);
@@ -635,9 +642,6 @@ int import_conf() {
 	SDL_RenderCopy(co, label3, NULL, &end);
 	SDL_DestroyTexture(label3);
 
-
-
-
 	// Couleur et Render
 	SDL_SetRenderDrawColor(co, 255, 255, 255, 255);
 	SDL_RenderDrawRect(co, &nom_conf);
@@ -656,21 +660,11 @@ int import_conf() {
 		case SDL_QUIT:
 			SDL_DestroyRenderer(co);
 			SDL_DestroyWindow(configuration);
+			SDL_Quit();
 			continuer = false;
 			break;
-
-		case SDL_MOUSEBUTTONUP:
-			if (event.button.x > LARGEUR_ - 103 && event.button.x < (LARGEUR_ - 103) + 64 && event.button.y>HAUTEUR_ - 96 && event.button.y < (HAUTEUR_ - 96) + 64) {
-			}
-
-
 		}
 	}
-
-
-
-	SDL_DestroyRenderer(co);
-	SDL_DestroyWindow(configuration);
 }
 int jeuAuto(bool& menu) {
 	bool tmp = NULL; // est utile pour que l'éclair ne soit pas fait en mode auto
