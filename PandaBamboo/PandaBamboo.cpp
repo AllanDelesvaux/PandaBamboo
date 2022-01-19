@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "config_sdl.h"
@@ -8,32 +7,14 @@ using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
 SDL_Color blanc = { 255,255,255 };
+SDL_Color rouge = { 255,0,0 };
+SDL_Color vert = { 0,255,0 };
+SDL_Color bleu = { 0,0,255 };
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
 const int N = 4;
 
-
-/*void out(Bamboo tab[N][N]) {
-	int a, b, nbr = 1;
-	ofstream sortie("config.txt", ios::out);
-	for (int i = 0; i < N; i++) {
-		for (int j = 0;j < N; j++) {
-			b = j; a = i;
-			sortie << nbr << ";" << tab[i][j].croissance << ";" << a << ";" << b << "\n";
-			nbr++;
-		}
-
-	}
-	cout << "Fichier écrit";
-	sortie.close();
-}
-*/
-
-void read(const char file[] = "config.txt") {
-
-
-}
 void interface_auto(SDL_Renderer* rendu) {
 
 	for (int i = 20; i < 820; i += 200) {
@@ -70,7 +51,7 @@ void Aléatoire(Bamboo tab[][N], int taille) {
 		}
 	}
 }
-int Reduce_Max(Bamboo tab[][N], int N, int& a, int& b) {
+int Reduce_Max(Bamboo tab[][N], int& a, int& b) {
 	int max = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -82,24 +63,6 @@ int Reduce_Max(Bamboo tab[][N], int N, int& a, int& b) {
 		}
 	}
 	return max;
-}
-void Reduce_Fastest(Bamboo tab[][N], int N, int& a, int& b) {
-	int j, H = 0, max = 0;
-	for (int i = 0;i < N;i++) {
-		for (j = 0;j < N;j++) {
-			H += tab[i][j].croissance;
-		}
-	}
-	int x = 1+ 1 / sqrt(5);
-	for (int i = 0;i < N;i++) {
-		for (j = 0;j < N;j++) {
-			if (tab[i][j].taille > x * H) {
-				max = tab[i][j].taille;
-				a = i;
-				b = j;
-			}
-		}
-	}
 }
 int Min(Bamboo tab[][N]) {
 	int min = 200;
@@ -196,8 +159,7 @@ void Down(SDL_Renderer* rendu, int& x, int& y) {
 
 	panda(rendu, x, y);
 }
-void legendeMan(SDL_Renderer* rendu, TTF_Font* font, Bamboo tab[][N]) {
-
+void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 
 	SDL_Rect spaceUtility;
 	spaceUtility.x = 20;
@@ -259,10 +221,52 @@ void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_DestroyTexture(texture1);
 
 	SDL_Texture* texture2 = loadText(rendu, "Return = Cut", blanc, font);
-	SDL_QueryTexture(texture1, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
+	SDL_QueryTexture(texture2, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
 	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
 	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture2);
+
+	SDL_Rect MoyenneLeg;
+	MoyenneLeg.x = 845;
+	MoyenneLeg.y = 620;
+	MoyenneLeg.w = 320;
+	MoyenneLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MoyenneLeg);
+
+	SDL_Rect MaxLeg;
+	MaxLeg.x = 845;
+	MaxLeg.y = 670;
+	MaxLeg.w = 320;
+	MaxLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MaxLeg);
+
+	SDL_Rect MinLeg;
+	MinLeg.x = 845;
+	MinLeg.y = 720;
+	MinLeg.w = 320;
+	MinLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MinLeg);
+
+	SDL_Texture* texture3 = loadText(rendu, "Moyenne", rouge, font);
+	SDL_QueryTexture(texture3, NULL, NULL, &MoyenneLeg.w, &MoyenneLeg.h);
+	SDL_RenderCopy(rendu, texture3, NULL, &MoyenneLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture3);
+
+	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
+	SDL_QueryTexture(texture4, NULL, NULL, &MaxLeg.w, &MaxLeg.h);
+	SDL_RenderCopy(rendu, texture4, NULL, &MaxLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture4);
+
+	SDL_Texture* texture5 = loadText(rendu, "Minimum", bleu, font);
+	SDL_QueryTexture(texture5, NULL, NULL, &MinLeg.w, &MinLeg.h);
+	SDL_RenderCopy(rendu, texture5, NULL, &MinLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture5);
 
 	SDL_RenderPresent(rendu);
 
@@ -285,9 +289,53 @@ void GraphStats(SDL_Renderer* rendu) {
 	SDL_RenderDrawLine(rendu, 1175, 590, 1165, 600);
 	SDL_RenderPresent(rendu);
 }
+void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[], int& a, int& c) {
+	SDL_Rect Graph;
+	Graph.x = 855;
+	Graph.y = 280;
+	Graph.w = 335;
+	Graph.h = 300;
+	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+	SDL_RenderFillRect(rendu, &Graph);
+	for (int i = c; i < 100 + c; i++) {
+
+		a = 856 + (i - c) * 3;
+		SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[(i) % 100] / 10, a + 3, 290 + TabMoy[(i + 1) % 100] / 10);
+		SDL_RenderPresent(rendu);
+
+		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+		SDL_RenderDrawLine(rendu, a, 390 + TabMax[(i) % 100], a + 3, 390 + TabMax[(i + 1) % 100]);
+		SDL_RenderPresent(rendu);
+
+		SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
+		SDL_RenderDrawLine(rendu, a, 490 + TabMin[(i) % 100], a + 3, 490 + TabMin[(i + 1) % 100]);
+		SDL_RenderPresent(rendu);
+
+	}
+	a = 856;
+}
+void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c) {
+	int e;
+	int h;
+	if (o == 100) {
+		o = 0;
+		c++;
+	}
+	TabMoy[o] = Moyenne(Tab);
+	TabMin[o] = Min(Tab);
+	TabMax[o] = Reduce_Max(Tab, e, h);
+	o++;
+}
 int jeuAuto() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
+	int TabMoy[100] = { 0 };
+	int TabMax[100] = { 0 };
+	int TabMin[100] = { 0 };
+	int positionx1 = 850;
+	int c = 0;
+	int o = 0;
 	int a = 0;
 	int b = 0;
 	int x = 145;
@@ -315,7 +363,7 @@ int jeuAuto() {
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 30);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
 	interface_auto(rendu);
 	legendeAuto(rendu, font);
@@ -334,7 +382,7 @@ int jeuAuto() {
 			break;
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_t) {
-				while (Reduce_Max(Tab, N, a, b) < 170) {
+				while (Reduce_Max(Tab, a, b) < 170) {
 					for (int i = 0; i < N; i++) {
 						for (int j = 0; j < N; j++) {
 							Tab[i][j].taille += Tab[i][j].croissance;
@@ -381,7 +429,9 @@ int jeuAuto() {
 					a1 = a;
 					b1 = b;
 					SDL_RenderPresent(rendu);
-					SDL_Delay(1000);
+					SDL_Delay(100);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 			}
 		}
@@ -395,7 +445,13 @@ int jeuAuto() {
 int jeuMan() {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
-
+	int TabMoy[100] = { 0 };
+	int TabMax[100] = { 0 };
+	int TabMin[100] = { 0 };
+	int positionx1 = 850;
+	int w = 0;
+	int c = 0;
+	int o = 0;
 	int a = 0;
 	int b = 0;
 	int x = 145;
@@ -421,18 +477,18 @@ int jeuMan() {
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 30);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
 	interface_auto(rendu);
 	panda(rendu, x, y);
 	SDL_RenderPresent(rendu);
-	legendeMan(rendu, font,Tab);
+	legendeMan(rendu, font);
 	GraphStats(rendu);
 
 	bool continuer = true;
 	SDL_Event event;
 
-	while (continuer && Reduce_Max(Tab, N, a, b) < 170)
+	while (continuer && Reduce_Max(Tab, a, b) < 175)
 	{
 		SDL_WaitEvent(&event);
 		switch (event.type)
@@ -494,7 +550,11 @@ int jeuMan() {
 
 					}
 				}
-				SDL_RenderPresent(rendu);
+				if (w % 5 == 0) {
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+				}
+				w++;
 			}
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
@@ -523,7 +583,11 @@ int jeuMan() {
 
 					}
 				}
-				SDL_RenderPresent(rendu);
+				if (w % 5 == 0) {
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+				}
+				w++;
 			}
 		}
 	}
@@ -535,6 +599,10 @@ int jeuMan() {
 }
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font) {
 
+	SDL_Surface* image = SDL_LoadBMP("fond.bmp");
+	SDL_Texture* background = SDL_CreateTextureFromSurface(rendu, image);
+	SDL_RenderCopy(rendu, background, NULL, NULL);
+	SDL_RenderPresent(rendu);
 	SDL_Rect titre;
 	titre.x = 80;
 	titre.y = 40;
@@ -631,7 +699,7 @@ int main(int argn, char* argv[]) {
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("RobotoMono-Light.ttf", 60);
+	TTF_Font* font = TTF_OpenFont("Snes.ttf", 60);
 	TTF_Quit();
 	menu_principal(rendu, font);
 	SDL_RenderPresent(rendu);
