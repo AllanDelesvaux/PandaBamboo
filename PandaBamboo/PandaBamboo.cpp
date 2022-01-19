@@ -7,6 +7,9 @@ using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
 SDL_Color blanc = { 255,255,255 };
+SDL_Color rouge = { 255,0,0 };
+SDL_Color vert = { 0,255,0 };
+SDL_Color bleu = { 0,0,255 };
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
@@ -218,10 +221,52 @@ void legendeAuto(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_DestroyTexture(texture1);
 
 	SDL_Texture* texture2 = loadText(rendu, "Return = Cut", blanc, font);
-	SDL_QueryTexture(texture1, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
+	SDL_QueryTexture(texture2, NULL, NULL, &ReturnUtility.w, &ReturnUtility.h);
 	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
 	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture2);
+
+	SDL_Rect MoyenneLeg;
+	MoyenneLeg.x = 845;
+	MoyenneLeg.y = 620;
+	MoyenneLeg.w = 320;
+	MoyenneLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MoyenneLeg);
+
+	SDL_Rect MaxLeg;
+	MaxLeg.x = 845;
+	MaxLeg.y = 670;
+	MaxLeg.w = 320;
+	MaxLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MaxLeg);
+
+	SDL_Rect MinLeg;
+	MinLeg.x = 845;
+	MinLeg.y = 720;
+	MinLeg.w = 320;
+	MinLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MinLeg);
+
+	SDL_Texture* texture3 = loadText(rendu, "Moyenne", rouge, font);
+	SDL_QueryTexture(texture3, NULL, NULL, &MoyenneLeg.w, &MoyenneLeg.h);
+	SDL_RenderCopy(rendu, texture3, NULL, &MoyenneLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture3);
+
+	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
+	SDL_QueryTexture(texture4, NULL, NULL, &MaxLeg.w, &MaxLeg.h);
+	SDL_RenderCopy(rendu, texture4, NULL, &MaxLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture4);
+
+	SDL_Texture* texture5 = loadText(rendu, "Minimum", bleu, font);
+	SDL_QueryTexture(texture5, NULL, NULL, &MinLeg.w, &MinLeg.h);
+	SDL_RenderCopy(rendu, texture5, NULL, &MinLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture5);
 
 	SDL_RenderPresent(rendu);
 
@@ -246,29 +291,29 @@ void GraphStats(SDL_Renderer* rendu) {
 }
 void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[], int& a, int& c) {
 	SDL_Rect Graph;
-	Graph.x = 850;
-	Graph.y = 290;
+	Graph.x = 855;
+	Graph.y = 280;
 	Graph.w = 335;
 	Graph.h = 300;
 	SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
 	SDL_RenderFillRect(rendu, &Graph);
 	for (int i = c; i < 100 + c; i++) {
 
-		a = 850 + (i - c) * 3;
+		a = 856 + (i - c) * 3;
 		SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
-		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[i % 100], a + 3, 290 + TabMoy[i % 100]);
+		SDL_RenderDrawLine(rendu, a, 290 + TabMoy[(i) % 100] / 10, a + 3, 290 + TabMoy[(i + 1) % 100] / 10);
 		SDL_RenderPresent(rendu);
 
 		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-		SDL_RenderDrawLine(rendu, a, 390 + TabMax[i % 100], a + 3, 390 + TabMax[i % 100]);
+		SDL_RenderDrawLine(rendu, a, 390 + TabMax[(i) % 100], a + 3, 390 + TabMax[(i + 1) % 100]);
 		SDL_RenderPresent(rendu);
 
 		SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
-		SDL_RenderDrawLine(rendu, a, 490 + TabMin[i % 100], a + 3, 490 + TabMin[i % 100]);
+		SDL_RenderDrawLine(rendu, a, 490 + TabMin[(i) % 100], a + 3, 490 + TabMin[(i + 1) % 100]);
 		SDL_RenderPresent(rendu);
 
 	}
-	a = 850;
+	a = 856;
 }
 void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c) {
 	int e;
