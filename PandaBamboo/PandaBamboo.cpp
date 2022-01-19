@@ -6,10 +6,10 @@
 using namespace std;
 const int LARGEUR_ = 1000;
 const int HAUTEUR_ = 500;
-SDL_Color blanc = { 255,255,255 };
-SDL_Color rouge = { 255,0,0 };
-SDL_Color vert = { 0,255,0};
-SDL_Color bleu = { 0,0,255 };
+SDL_Color blanc = { 255, 255, 255 };
+SDL_Color rouge = { 255, 0, 0 };
+SDL_Color vert = { 0, 255, 0};
+SDL_Color bleu = { 0, 0, 255 };
 
 const int LARGEUR = 1200;
 const int HAUTEUR = 900;
@@ -64,7 +64,8 @@ int Reduce_Max(Bamboo tab[][N], int& a, int& b) {
 	}
 	return max;
 }
-int Min(Bamboo tab[][N]) {
+int Min(Bamboo tab[][N], int a, int b) {
+	tab[a][b].taille = 200;
 	int min = 200;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -73,6 +74,7 @@ int Min(Bamboo tab[][N]) {
 			}
 		}
 	}
+	tab[a][b].taille = 5;
 	return min;
 }
 int Moyenne(Bamboo Tab[][N]) {
@@ -190,6 +192,48 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_RenderCopy(rendu, texture2, NULL, &ReturnUtility);
 	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture2);
+
+	SDL_Rect MoyenneLeg;
+	MoyenneLeg.x = 845;
+	MoyenneLeg.y = 620;
+	MoyenneLeg.w = 320;
+	MoyenneLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MoyenneLeg);
+
+	SDL_Rect MaxLeg;
+	MaxLeg.x = 845;
+	MaxLeg.y = 670;
+	MaxLeg.w = 320;
+	MaxLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MaxLeg);
+
+	SDL_Rect MinLeg;
+	MinLeg.x = 845;
+	MinLeg.y = 720;
+	MinLeg.w = 320;
+	MinLeg.h = 40;
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &MinLeg);
+
+	SDL_Texture* texture3 = loadText(rendu, "Moyenne", rouge, font);
+	SDL_QueryTexture(texture3, NULL, NULL, &MoyenneLeg.w, &MoyenneLeg.h);
+	SDL_RenderCopy(rendu, texture3, NULL, &MoyenneLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture3);
+
+	SDL_Texture* texture4 = loadText(rendu, "Maximum", vert, font);
+	SDL_QueryTexture(texture4, NULL, NULL, &MaxLeg.w, &MaxLeg.h);
+	SDL_RenderCopy(rendu, texture4, NULL, &MaxLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture4);
+
+	SDL_Texture* texture5 = loadText(rendu, "Minimum", bleu, font);
+	SDL_QueryTexture(texture5, NULL, NULL, &MinLeg.w, &MinLeg.h);
+	SDL_RenderCopy(rendu, texture5, NULL, &MinLeg);
+	SDL_RenderPresent(rendu);
+	SDL_DestroyTexture(texture5);
 
 	SDL_RenderPresent(rendu);
 
@@ -315,7 +359,7 @@ void AfficheStats(SDL_Renderer* rendu, int TabMoy[], int TabMin[], int TabMax[],
 	}
 	a = 856;
 }
-void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c) {
+void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, int& c, int a, int b) {
 	int e;
 	int h;
 	if (o == 100) {
@@ -323,9 +367,42 @@ void Stats(Bamboo Tab[][N], int TabMoy[], int TabMin[], int TabMax[], int& o, in
 		c++;
 	}
 	TabMoy[o] = Moyenne(Tab);
-	TabMin[o] = Min(Tab);
+	TabMin[o] = Min(Tab,a,b);
 	TabMax[o] = Reduce_Max(Tab, e, h);
 	o++;
+}
+void AfficheRecharge(SDL_Renderer* rendu, int taille) {
+	for (int i = 0; i < 7; i++) {
+		SDL_Rect rg;
+		rg.x = 845+40*i;
+		rg.y = 770;
+		rg.w = 40;
+		rg.h = 40;
+		SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+		SDL_RenderDrawRect(rendu, &rg);
+		SDL_RenderPresent(rendu);
+	}
+	for (int i = 0; i < taille; i++) {
+		SDL_Rect rt;
+		rt.x = 846 + 40 * i;
+		rt.y = 771;
+		rt.w = 38;
+		rt.h = 38;
+		SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+		SDL_RenderFillRect(rendu, &rt);
+		SDL_RenderPresent(rendu);
+	}
+	for (int i = taille; i < 7; i++) {
+
+		SDL_Rect rt;
+		rt.x = 846 + 40 * i;
+		rt.y = 771;
+		rt.w = 38;
+		rt.h = 38;
+		SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+		SDL_RenderFillRect(rendu, &rt);
+		SDL_RenderPresent(rendu);
+	}
 }
 int jeuAuto() {
 	Bamboo Tab[N][N];
@@ -334,14 +411,15 @@ int jeuAuto() {
 	int TabMax[100] = { 0 };
 	int TabMin[100] = { 0 };
 	int positionx1 = 850;
+	int recharge=7;
 	int c = 0;
 	int o = 0;
 	int a = 0;
 	int b = 0;
 	int x = 145;
 	int y = 720;
-	int a1 = 0;
-	int b1 = 0;
+	int a1 = 3;
+	int b1 = 3;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cout << "Echec à l’ouverture";
 		return 1;
@@ -368,6 +446,7 @@ int jeuAuto() {
 	interface_auto(rendu);
 	legendeAuto(rendu, font);
 	GraphStats(rendu);
+	AfficheRecharge(rendu, recharge);
 	bool continuer = true;
 	SDL_Event event;
 	SDL_Delay(1000);
@@ -408,31 +487,79 @@ int jeuAuto() {
 							SDL_RenderPresent(rendu);
 						}
 					}
-					SDL_RenderPresent(rendu);
-					SDL_Rect Cut;
-					Cut.x = b * 200 + 73;
-					Cut.y = (a + 1) * 200 - 155;
-					Cut.w = 40;
-					Cut.h = 169;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cut);
-					SDL_RenderPresent(rendu);
-					Tab[a][b].taille = 5;
-					panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
-					SDL_Rect Cutpanda;
-					Cutpanda.x = b1 * 200 + 146;
-					Cutpanda.y = (a1 + 1) * 200 - 79;
-					Cutpanda.w = 73;
-					Cutpanda.h = 98;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cutpanda);
-					a1 = a;
-					b1 = b;
-					SDL_RenderPresent(rendu);
-					SDL_Delay(100);
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					if(a!=a1 && b!=b1){
+						panda(rendu, b * 200 + 147, (a1 + 1) * 200 - 76);
+						SDL_Rect Cutpanda;
+						Cutpanda.x = b1 * 200 + 146;
+						Cutpanda.y = (a1 + 1) * 200 - 79;
+						Cutpanda.w = 73;
+						Cutpanda.h = 98;
+						SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+						SDL_RenderFillRect(rendu, &Cutpanda);
+						SDL_RenderPresent(rendu);
+						b1 = b;
+					}else{
+						SDL_Rect Cut;
+						Cut.x = b * 200 + 73;
+						Cut.y = (a + 1) * 200 - 155;
+						Cut.w = 40;
+						Cut.h = 169;
+						SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+						SDL_RenderFillRect(rendu, &Cut);
+						SDL_RenderPresent(rendu);
+						Tab[a][b].taille = 5;
+
+						panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
+						SDL_Rect Cutpanda;
+						Cutpanda.x = b1 * 200 + 146;
+						Cutpanda.y = (a1 + 1) * 200 - 79;
+						Cutpanda.w = 73;
+						Cutpanda.h = 98;
+						SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+						SDL_RenderFillRect(rendu, &Cutpanda);
+						a1 = a;
+						b1 = b;
+						SDL_RenderPresent(rendu);
+					}
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c, a, b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+					recharge--;
+					if (recharge == 0) {
+						for (int i = 0; i < N; i++) {
+							for (int j = 0; j < N; j++) {
+								Tab[i][j].taille += Tab[i][j].croissance;
+							}
+						}
+						for (int i = 0; i < N; i++) {
+							for (int j = 0; j < N; j++) {
+								SDL_Rect bamboo;
+								bamboo.x = j * 200 + 83;
+								bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+								bamboo.w = 10;
+								bamboo.h = Tab[i][j].taille;
+								SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+								SDL_RenderFillRect(rendu, &bamboo);
+
+								SDL_Rect bambooStep;
+								bambooStep.x = j * 200 + 80;
+								bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+								bambooStep.w = 16;
+								bambooStep.h = 2;
+								SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+								SDL_RenderFillRect(rendu, &bambooStep);
+								SDL_RenderPresent(rendu);
+								recharge = 7;
+							}
+						}
+						SDL_Delay(1000);
+					}
+					AfficheRecharge(rendu, recharge);
 				}
+				SDL_DestroyRenderer(rendu);
+				SDL_DestroyWindow(win);
+				SDL_Quit();
+				std::cout << "perdu";
+				return 0;
 			}
 		}
 	}
@@ -449,6 +576,8 @@ int jeuMan() {
 	int TabMax[100] = { 0 };
 	int TabMin[100] = { 0 };
 	int positionx1 = 850;
+	int limCases = 3;
+	int recharge = 7;
 	int w = 0;
 	int c = 0;
 	int o = 0;
@@ -484,6 +613,7 @@ int jeuMan() {
 	SDL_RenderPresent(rendu);
 	legendeMan(rendu, font);
 	GraphStats(rendu);
+	AfficheRecharge(rendu, recharge);
 
 	bool continuer = true;
 	SDL_Event event;
@@ -498,21 +628,25 @@ int jeuMan() {
 			continuer = false;
 			break;
 		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_LEFT && x > 145) {
+			if (event.key.keysym.sym == SDLK_LEFT && x > 145 && limCases != 0) {
 				Left(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
-			if (event.key.keysym.sym == SDLK_RIGHT && x < 660) {
+			if (event.key.keysym.sym == SDLK_RIGHT && x < 660 && limCases != 0) {
 				Right(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
-			if (event.key.keysym.sym == SDLK_UP && y > 180) {
+			if (event.key.keysym.sym == SDLK_UP && y > 180 && limCases != 0) {
 				Up(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
-			if (event.key.keysym.sym == SDLK_DOWN && y < 720) {
+			if (event.key.keysym.sym == SDLK_DOWN && y < 720 && limCases != 0) {
 				Down(rendu, x, y);
 				SDL_RenderPresent(rendu);
+				limCases--;
 			}
 			if (event.key.keysym.sym == SDLK_RETURN) {
 				SDL_Rect Cut;
@@ -550,11 +684,43 @@ int jeuMan() {
 
 					}
 				}
+				limCases = 3;
+				recharge--;
+				if (recharge == 0) {
+					for (int i = 0; i < N; i++) {
+						for (int j = 0; j < N; j++) {
+							Tab[i][j].taille += Tab[i][j].croissance;
+						}
+					}
+					for (int i = 0; i < N; i++) {
+						for (int j = 0; j < N; j++) {
+							SDL_Rect bamboo;
+							bamboo.x = j * 200 + 83;
+							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+							bamboo.w = 10;
+							bamboo.h = Tab[i][j].taille;
+							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+							SDL_RenderFillRect(rendu, &bamboo);
+
+							SDL_Rect bambooStep;
+							bambooStep.x = j * 200 + 80;
+							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
+							bambooStep.w = 16;
+							bambooStep.h = 2;
+							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
+							SDL_RenderFillRect(rendu, &bambooStep);
+							SDL_RenderPresent(rendu);
+							recharge=7;
+						}
+					}
+					SDL_Delay(1000);
+				}
 				if (w % 5 == 0) {
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c,a,b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
+				AfficheRecharge(rendu, recharge);
 			}
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
@@ -584,10 +750,11 @@ int jeuMan() {
 					}
 				}
 				if (w % 5 == 0) {
-					Stats(Tab, TabMoy, TabMin, TabMax, o, c);
+					Stats(Tab, TabMoy, TabMin, TabMax, o, c,a,b);
 					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
+				AfficheRecharge(rendu, recharge);
 			}
 		}
 	}
