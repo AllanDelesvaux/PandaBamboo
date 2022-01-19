@@ -591,7 +591,7 @@ int import_conf() {
 	SDL_DestroyRenderer(co);
 	SDL_DestroyWindow(configuration);
 }
-int jeuAuto() {
+int jeuAuto(bool& menu) {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
 	int TabMoy[10] = { 0 };
@@ -607,32 +607,32 @@ int jeuAuto() {
 	int a1 = 3;
 	int b1 = 3;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		std::cout << "Echec à l’ouverture";
+		std::cout << "Echec à l’ouverture mode auto";
 		return 1;
 	}
 
-	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
+	SDL_Window* autowin = SDL_CreateWindow("Mode Automatique",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		LARGEUR,
 		HAUTEUR,
 		SDL_WINDOW_SHOWN
 	);
-	if (win == NULL)
-		std::cout << "erreur ouverture fenetre";
+	if (autowin == NULL)
+		std::cout << "Erreur ouverture fenetre automatique";
 
-	SDL_Renderer* rendu = SDL_CreateRenderer(
-		win,
+	SDL_Renderer* autorend = SDL_CreateRenderer(
+		autowin,
 		-1,
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
-	interface_auto(rendu);
-	legendeAuto(rendu, font);
-	GraphStats(rendu);
-	AfficheRecharge(rendu, recharge);
+	interface_auto(autorend);
+	legendeAuto(autorend, font);
+	GraphStats(autorend);
+	AfficheRecharge(autorend, recharge);
 	bool continuer = true;
 	SDL_Event event;
 	bool TimePlay = true;
@@ -644,9 +644,12 @@ int jeuAuto() {
 		switch (event.type)
 		{
 		case SDL_QUIT:
-
+			SDL_DestroyRenderer(autorend);
+			SDL_DestroyWindow(autowin);
 			continuer = false;
-			break;
+			menu = true;
+			printf("Vous avez quitté le mode manuel\n----> Retour au Menu !\n");
+			return(-1);
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_t) {
 				TimePlay = false;
@@ -654,11 +657,21 @@ int jeuAuto() {
 			if (event.key.keysym.sym == SDLK_r) {
 				TimePlay = true;
 			}
+			if (event.key.keysym.sym == SDLK_ESCAPE) {
+				SDL_DestroyRenderer(autorend);
+				SDL_DestroyWindow(autowin);
+				continuer = false;
+				menu = true;
+				printf("Vous avez quitté le mode automatique\n----> Retour au Menu !\n");
+				return-1;
+			}
 			if (event.key.keysym.sym == SDLK_p) {
 				Mode = false; //fastest
+				printf("\nMode Fastest actif ! \n");
 			}
 			if (event.key.keysym.sym == SDLK_m) {
 				Mode = true; //autre
+				printf("\nMode Maxest actif ! \n");
 			}
 		}
 		if(Mode = false){
@@ -678,16 +691,16 @@ int jeuAuto() {
 							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 							bamboo.w = 10;
 							bamboo.h = Tab[i][j].taille;
-							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-							SDL_RenderFillRect(rendu, &bamboo);
+							SDL_SetRenderDrawColor(autorend, 0, 255, 0, 255);
+							SDL_RenderFillRect(autorend, &bamboo);
 
 							SDL_Rect bambooStep;
 							bambooStep.x = j * 200 + 80;
 							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 							bambooStep.w = 16;
 							bambooStep.h = 2;
-							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-							SDL_RenderFillRect(rendu, &bambooStep);
+							SDL_SetRenderDrawColor(autorend, 0, 128, 0, 255);
+							SDL_RenderFillRect(autorend, &bambooStep);
 						}
 					}
 					//if (a == a1 || b == b1) {
@@ -696,17 +709,17 @@ int jeuAuto() {
 					Cut.y = (a + 1) * 200 - 155;
 					Cut.w = 40;
 					Cut.h = 169;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cut);
+					SDL_SetRenderDrawColor(autorend, 0, 0, 0, 255);
+					SDL_RenderFillRect(autorend, &Cut);
 					Tab[a][b].taille = 5;
-					panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
+					panda(autorend, b * 200 + 147, (a + 1) * 200 - 76);
 					SDL_Rect Cutpanda;
 					Cutpanda.x = b1 * 200 + 146;
 					Cutpanda.y = (a1 + 1) * 200 - 79;
 					Cutpanda.w = 73;
 					Cutpanda.h = 98;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cutpanda);
+					SDL_SetRenderDrawColor(autorend, 0, 0, 0, 255);
+					SDL_RenderFillRect(autorend, &Cutpanda);
 					a1 = a;
 					b1 = b;
 					//}
@@ -723,7 +736,7 @@ int jeuAuto() {
 						b1 = b;
 					}*/
 					Stats(Tab, TabMoy, TabMin, TabMax, c, a, b);
-					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+					AfficheStats(autorend, TabMoy, TabMin, TabMax, positionx1, c);
 					recharge--;
 					if (recharge == 0) {
 						for (int i = 0; i < N; i++) {
@@ -738,22 +751,22 @@ int jeuAuto() {
 								bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 								bamboo.w = 10;
 								bamboo.h = Tab[i][j].taille;
-								SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-								SDL_RenderFillRect(rendu, &bamboo);
+								SDL_SetRenderDrawColor(autorend, 0, 255, 0, 255);
+								SDL_RenderFillRect(autorend, &bamboo);
 
 								SDL_Rect bambooStep;
 								bambooStep.x = j * 200 + 80;
 								bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 								bambooStep.w = 16;
 								bambooStep.h = 2;
-								SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-								SDL_RenderFillRect(rendu, &bambooStep);
+								SDL_SetRenderDrawColor(autorend, 0, 128, 0, 255);
+								SDL_RenderFillRect(autorend, &bambooStep);
 								recharge = 7;
 							}
 						}
 					}
-					AfficheRecharge(rendu, recharge);
-					SDL_RenderPresent(rendu);
+					AfficheRecharge(autorend, recharge);
+					SDL_RenderPresent(autorend);
 
 				}
 			}
@@ -777,16 +790,16 @@ int jeuAuto() {
 							bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 							bamboo.w = 10;
 							bamboo.h = Tab[i][j].taille;
-							SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-							SDL_RenderFillRect(rendu, &bamboo);
+							SDL_SetRenderDrawColor(autorend, 0, 255, 0, 255);
+							SDL_RenderFillRect(autorend, &bamboo);
 
 							SDL_Rect bambooStep;
 							bambooStep.x = j * 200 + 80;
 							bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 							bambooStep.w = 16;
 							bambooStep.h = 2;
-							SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-							SDL_RenderFillRect(rendu, &bambooStep);
+							SDL_SetRenderDrawColor(autorend, 0, 128, 0, 255);
+							SDL_RenderFillRect(autorend, &bambooStep);
 						}
 					}
 					//if (a == a1 || b == b1) {
@@ -795,17 +808,17 @@ int jeuAuto() {
 					Cut.y = (a + 1) * 200 - 155;
 					Cut.w = 40;
 					Cut.h = 169;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cut);
+					SDL_SetRenderDrawColor(autorend, 0, 0, 0, 255);
+					SDL_RenderFillRect(autorend, &Cut);
 					Tab[a][b].taille = 5;
-					panda(rendu, b * 200 + 147, (a + 1) * 200 - 76);
+					panda(autorend, b * 200 + 147, (a + 1) * 200 - 76);
 					SDL_Rect Cutpanda;
 					Cutpanda.x = b1 * 200 + 146;
 					Cutpanda.y = (a1 + 1) * 200 - 79;
 					Cutpanda.w = 73;
 					Cutpanda.h = 98;
-					SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-					SDL_RenderFillRect(rendu, &Cutpanda);
+					SDL_SetRenderDrawColor(autorend, 0, 0, 0, 255);
+					SDL_RenderFillRect(autorend, &Cutpanda);
 					a1 = a;
 					b1 = b;
 					//}
@@ -822,7 +835,7 @@ int jeuAuto() {
 						b1 = b;
 					}*/
 					Stats(Tab, TabMoy, TabMin, TabMax, c, a, b);
-					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+					AfficheStats(autorend, TabMoy, TabMin, TabMax, positionx1, c);
 					recharge--;
 					if (recharge == 0) {
 						for (int i = 0; i < N; i++) {
@@ -837,22 +850,22 @@ int jeuAuto() {
 								bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 								bamboo.w = 10;
 								bamboo.h = Tab[i][j].taille;
-								SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-								SDL_RenderFillRect(rendu, &bamboo);
+								SDL_SetRenderDrawColor(autorend, 0, 255, 0, 255);
+								SDL_RenderFillRect(autorend, &bamboo);
 
 								SDL_Rect bambooStep;
 								bambooStep.x = j * 200 + 80;
 								bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 								bambooStep.w = 16;
 								bambooStep.h = 2;
-								SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-								SDL_RenderFillRect(rendu, &bambooStep);
+								SDL_SetRenderDrawColor(autorend, 0, 128, 0, 255);
+								SDL_RenderFillRect(autorend, &bambooStep);
 								recharge = 7;
 							}
 						}
 					}
-					AfficheRecharge(rendu, recharge);
-					SDL_RenderPresent(rendu);
+					AfficheRecharge(autorend, recharge);
+					SDL_RenderPresent(autorend);
 				}
 			}
 			else {
@@ -860,13 +873,13 @@ int jeuAuto() {
 			}
 		}
 	}
-	SDL_DestroyRenderer(rendu);
-	SDL_DestroyWindow(win);
-	SDL_Quit();
-	std::cout << "perdu";
+	menu = true;
+	SDL_DestroyRenderer(autorend);
+	SDL_DestroyWindow(autowin);
+	std::cout << "Mode Automatique : Perdu\n";
 	return 0;
 }
-int jeuMan() {
+int jeuMan(bool& menu) {
 	Bamboo Tab[N][N];
 	Aléatoire(Tab, N);
 	int TabMoy[10] = { 0 };
@@ -882,34 +895,34 @@ int jeuMan() {
 	int x = 145;
 	int y = 720;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		std::cout << "Echec à l’ouverture";
+		std::cout << "\nEchec à l’ouverture mode manuel\n";
 		return 1;
 	}
 
-	SDL_Window* win = SDL_CreateWindow("Ma fenetre",
+	SDL_Window* manwin = SDL_CreateWindow("Mode Manuel",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		LARGEUR,
 		HAUTEUR,
 		SDL_WINDOW_SHOWN
 	);
-	if (win == NULL)
-		std::cout << "erreur ouverture fenetre";
+	if (manwin == NULL)
+		std::cout << "\nErreur ouverture fenetre mode manuel\n";
 
-	SDL_Renderer* rendu = SDL_CreateRenderer(
-		win,
+	SDL_Renderer* manrend = SDL_CreateRenderer(
+		manwin,
 		-1,
 		SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("Snes.ttf", 30);
 	TTF_Quit();
-	interface_auto(rendu);
-	panda(rendu, x, y);
-	SDL_RenderPresent(rendu);
-	legendeMan(rendu, font);
-	GraphStats(rendu);
-	AfficheRecharge(rendu, recharge);
+	interface_auto(manrend);
+	panda(manrend, x, y);
+	//SDL_RenderPresent(manrend);
+	legendeMan(manrend, font);
+	GraphStats(manrend);
+	AfficheRecharge(manrend, recharge);
 
 	bool continuer = true;
 	SDL_Event event;
@@ -920,28 +933,39 @@ int jeuMan() {
 		switch (event.type)
 		{
 		case SDL_QUIT:
-
+			SDL_DestroyRenderer(manrend);
+			SDL_DestroyWindow(manwin);
+			menu = true;
 			continuer = false;
-			break;
+			printf("Vous avez quitté le mode manuel\n----> Retour au Menu !\n");
+			return -1;
 		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_ESCAPE) {
+				SDL_DestroyRenderer(manrend);
+				SDL_DestroyWindow(manwin);
+				menu = true;
+				continuer = false;
+				printf("Vous avez quitté le mode manuel\n----> Retour au Menu !\n");
+				return -1;
+			}
 			if (event.key.keysym.sym == SDLK_LEFT && x > 145 && limCases != 0) {
-				Left(rendu, x, y);
-				SDL_RenderPresent(rendu);
+				Left(manrend, x, y);
+				SDL_RenderPresent(manrend);
 				limCases--;
 			}
 			if (event.key.keysym.sym == SDLK_RIGHT && x < 660 && limCases != 0) {
-				Right(rendu, x, y);
-				SDL_RenderPresent(rendu);
+				Right(manrend, x, y);
+				SDL_RenderPresent(manrend);
 				limCases--;
 			}
 			if (event.key.keysym.sym == SDLK_UP && y > 180 && limCases != 0) {
-				Up(rendu, x, y);
-				SDL_RenderPresent(rendu);
+				Up(manrend, x, y);
+				SDL_RenderPresent(manrend);
 				limCases--;
 			}
 			if (event.key.keysym.sym == SDLK_DOWN && y < 720 && limCases != 0) {
-				Down(rendu, x, y);
-				SDL_RenderPresent(rendu);
+				Down(manrend, x, y);
+				SDL_RenderPresent(manrend);
 				limCases--;
 			}
 			if (event.key.keysym.sym == SDLK_RETURN) {
@@ -951,9 +975,9 @@ int jeuMan() {
 				Cut.w = 40;
 				Cut.h = 169;
 				Tab[(y - 20) / 200][(x - 20) / 200].taille = 5;
-				SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-				SDL_RenderFillRect(rendu, &Cut);
-				SDL_RenderPresent(rendu);
+				SDL_SetRenderDrawColor(manrend, 0, 0, 0, 255);
+				SDL_RenderFillRect(manrend, &Cut);
+				SDL_RenderPresent(manrend);
 				for (int i = 0; i < N; i++) {
 					for (int j = 0; j < N; j++) {
 						Tab[i][j].taille += Tab[i][j].croissance;
@@ -966,17 +990,17 @@ int jeuMan() {
 						bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 						bamboo.w = 10;
 						bamboo.h = Tab[i][j].taille;
-						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-						SDL_RenderFillRect(rendu, &bamboo);
+						SDL_SetRenderDrawColor(manrend, 0, 255, 0, 255);
+						SDL_RenderFillRect(manrend, &bamboo);
 
 						SDL_Rect bambooStep;
 						bambooStep.x = j * 200 + 80;
 						bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 						bambooStep.w = 16;
 						bambooStep.h = 2;
-						SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-						SDL_RenderFillRect(rendu, &bambooStep);
-						SDL_RenderPresent(rendu);
+						SDL_SetRenderDrawColor(manrend, 0, 128, 0, 255);
+						SDL_RenderFillRect(manrend, &bambooStep);
+						SDL_RenderPresent(manrend);
 
 					}
 				}
@@ -992,10 +1016,10 @@ int jeuMan() {
 				}
 				if (w % 5 == 0) {
 					Stats(Tab, TabMoy, TabMin, TabMax, c, a, b);
-					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+					AfficheStats(manrend, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
-				AfficheRecharge(rendu, recharge);
+				AfficheRecharge(manrend, recharge);
 			}
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				for (int i = 0; i < N; i++) {
@@ -1010,41 +1034,41 @@ int jeuMan() {
 						bamboo.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 						bamboo.w = 10;
 						bamboo.h = Tab[i][j].taille;
-						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
-						SDL_RenderFillRect(rendu, &bamboo);
+						SDL_SetRenderDrawColor(manrend, 0, 255, 0, 255);
+						SDL_RenderFillRect(manrend, &bamboo);
 
 						SDL_Rect bambooStep;
 						bambooStep.x = j * 200 + 80;
 						bambooStep.y = (i + 1) * 200 + 20 - Tab[i][j].taille;
 						bambooStep.w = 16;
 						bambooStep.h = 2;
-						SDL_SetRenderDrawColor(rendu, 0, 128, 0, 255);
-						SDL_RenderFillRect(rendu, &bambooStep);
-						SDL_RenderPresent(rendu);
+						SDL_SetRenderDrawColor(manrend, 0, 128, 0, 255);
+						SDL_RenderFillRect(manrend, &bambooStep);
+						SDL_RenderPresent(manrend);
 
 					}
 				}
 				if (w % 5 == 0) {
 					Stats(Tab, TabMoy, TabMin, TabMax, c, a, b);
-					AfficheStats(rendu, TabMoy, TabMin, TabMax, positionx1, c);
+					AfficheStats(manrend, TabMoy, TabMin, TabMax, positionx1, c);
 				}
 				w++;
-				AfficheRecharge(rendu, recharge);
+				AfficheRecharge(manrend, recharge);
 			}
 		}
 	}
-	SDL_DestroyRenderer(rendu);
-	SDL_DestroyWindow(win);
-	SDL_Quit();
-	std::cout << "Vous avez perdu !";
+	SDL_DestroyRenderer(manrend);
+	SDL_DestroyWindow(manwin);
+	printf("\nVous avez perdu !\Retour au menu !");
+	menu = true;
 	return 0;
 }
 void menu_principal(SDL_Renderer* rendu, TTF_Font* font,TTF_Font* font2, SDL_Rect& sound) {
-
+	SDL_RenderClear(rendu);
 	SDL_Surface* image = SDL_LoadBMP("fond.bmp");
 	SDL_Texture* background = SDL_CreateTextureFromSurface(rendu, image);
+	SDL_FreeSurface(image);
 	SDL_RenderCopy(rendu, background, NULL, NULL);
-	SDL_RenderPresent(rendu);
 	SDL_Rect titre;
 	titre.x = 80;
 	titre.y = 40;
@@ -1087,7 +1111,6 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font,TTF_Font* font2, SDL_Rec
 	SDL_Texture* texture1 = loadText(rendu, "Panda Garden", blanc, font);
 	SDL_QueryTexture(texture1, NULL, NULL, &titre_.w, &titre_.h);
 	SDL_RenderCopy(rendu, texture1, NULL, &titre_);
-	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture1);
 
 	SDL_Rect jeu_auto;
@@ -1124,13 +1147,11 @@ void menu_principal(SDL_Renderer* rendu, TTF_Font* font,TTF_Font* font2, SDL_Rec
 	SDL_Texture* texture2 = loadText(rendu, "Auto", blanc, font);
 	SDL_QueryTexture(texture2, NULL, NULL, &jeu_auto_.w, &jeu_auto_.h);
 	SDL_RenderCopy(rendu, texture2, NULL, &jeu_auto_);
-	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture2);
 
 	SDL_Texture* texture3 = loadText(rendu, "Manuel", blanc, font);
 	SDL_QueryTexture(texture3, NULL, NULL, &jeu_manuel_.w, &jeu_manuel_.h);
 	SDL_RenderCopy(rendu, texture3, NULL, &jeu_manuel_);
-	SDL_RenderPresent(rendu);
 	SDL_DestroyTexture(texture3);
 
 
@@ -1221,9 +1242,11 @@ int main(int argn, char* argv[]) {
 						SDL_PauseAudioDevice(deviceId, 1);
 						SDL_Texture* audio3 = loadImage(rendu, "audio3.png");
 						SDL_RenderCopy(rendu, audio3, NULL, &sound);
+						SDL_DestroyTexture(audio3);
 						SDL_RenderPresent(rendu);
 						SDL_Texture* audio = loadImage(rendu, "audio2.png");
 						SDL_RenderCopy(rendu, audio, NULL, &sound);
+						SDL_DestroyTexture(audio);
 						SDL_RenderPresent(rendu);
 						music = false;
 					}
@@ -1231,9 +1254,11 @@ int main(int argn, char* argv[]) {
 						SDL_PauseAudioDevice(deviceId, 0);
 						SDL_Texture* audio3 = loadImage(rendu, "audio3.png");
 						SDL_RenderCopy(rendu, audio3, NULL, &sound);
+						SDL_DestroyTexture(audio3);
 						SDL_RenderPresent(rendu);
 						SDL_Texture* audio = loadImage(rendu, "audio.png");
 						SDL_RenderCopy(rendu, audio, NULL, &sound);
+						SDL_DestroyTexture(audio);
 						SDL_RenderPresent(rendu);
 						music = true;
 					}
@@ -1248,15 +1273,11 @@ int main(int argn, char* argv[]) {
 				}
 				else if (event.button.x > 80 && event.button.x < LARGEUR_ / 2 - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					in_menu = false;
-					SDL_DestroyRenderer(rendu);
-					SDL_DestroyWindow(win);
-					jeuAuto();
+					jeuAuto(in_menu);
 				}
 				else if (event.button.x > LARGEUR_ / 2 + 80 && event.button.x < LARGEUR_ - 80 && event.button.y>HAUTEUR_ / 2 - 100 && event.button.y < HAUTEUR_ / 2 + 100) {
 					in_menu = false;
-					SDL_DestroyRenderer(rendu);
-					SDL_DestroyWindow(win);
-					jeuMan();
+					jeuMan(in_menu);
 				}
 			}
 		}
