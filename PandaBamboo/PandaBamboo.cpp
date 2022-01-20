@@ -306,7 +306,7 @@ void legendeMan(SDL_Renderer* rendu, TTF_Font* font) {
 	SDL_RenderCopy(rendu, texture9, NULL, &energy);
 	SDL_DestroyTexture(texture9);
 
-	SDL_Texture* texture10 = loadText(rendu, "sur la foudre.", blanc, font);
+	SDL_Texture* texture10 = loadText(rendu, "sur la canette.", blanc, font);
 	SDL_QueryTexture(texture10, NULL, NULL, &energy2.w, &energy2.h);
 	SDL_RenderCopy(rendu, texture10, NULL, &energy2);
 	SDL_DestroyTexture(texture10);
